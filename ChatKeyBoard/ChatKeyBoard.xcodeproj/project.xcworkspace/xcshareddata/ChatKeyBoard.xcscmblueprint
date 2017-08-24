@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "0E34F722ABAD561A0973CAD329833BAB8372E916",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "25FB4C79C41FA564166C41731DC401291628BD08" : 9223372036854775807,
+    "0E34F722ABAD561A0973CAD329833BAB8372E916" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "FCD34FD4-D47C-416F-9D9A-CED4460F118E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "25FB4C79C41FA564166C41731DC401291628BD08" : "",
+    "0E34F722ABAD561A0973CAD329833BAB8372E916" : "ChatKeyBoard\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ChatKeyBoard",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ChatKeyBoard\/ChatKeyBoard.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/WXLwkl\/ChatKeyBoard.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0E34F722ABAD561A0973CAD329833BAB8372E916"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/WXLwkl\/XLTest.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "25FB4C79C41FA564166C41731DC401291628BD08"
+    }
+  ]
+}
