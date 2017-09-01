@@ -8,14 +8,7 @@
 
 #import "ChatToolBar.h"
 #import "Header.h"
-#import "ChatToolBarItemModel.h"
-typedef NS_ENUM(NSInteger, BtnKind) {
-    BtnKindVoice,
-    BtnKindFace,
-    BtnKindMore,
-    BtnKindSwitchBar
-};
-
+//#import "ChatToolBarItemModel.h"
 
 #define Image(str)              (str == nil || str.length == 0) ? nil : [UIImage imageNamed:str]
 #define ItemW                   44                  //44
@@ -31,17 +24,19 @@ typedef NS_ENUM(NSInteger, BtnKind) {
 /** 临时记录输入的textView */
 @property (nonatomic, copy) NSString *currentText;
 
+/** 切换barView按钮 */
 @property (nonatomic, strong) UIButton *switchBarBtn;
+/** 语音按钮 */
 @property (nonatomic, strong) UIButton *voiceBtn;
+/** 表情按钮 */
 @property (nonatomic, strong) UIButton *faceBtn;
+/** more按钮 */
 @property (nonatomic, strong) UIButton *moreBtn;
-@property (nonatomic, strong) XLTextView *textView;
+
+/** 按住录制语音按钮 */
 @property (nonatomic, strong) RecordButton *recordBtn;
 
-@property (readwrite) BOOL voiceSelected;
-@property (readwrite) BOOL faceSelected;
-@property (readwrite) BOOL moreFuncSelected;
-@property (readwrite) BOOL switchBarSelected;
+
 
 
 @end
@@ -70,6 +65,7 @@ typedef NS_ENUM(NSInteger, BtnKind) {
     self.allowVoice = YES;
     self.allowFace = YES;
     self.allowMoreFunc = YES;
+    self.previousTextViewHeight = TextViewH;
 }
 
 - (void)initSubviews {
@@ -77,19 +73,7 @@ typedef NS_ENUM(NSInteger, BtnKind) {
     self.layer.borderWidth = 1;
     self.layer.borderColor = [UIColor colorWithRed:215.0/255.0 green:215/255.0 blue:217/255.0 alpha:1.0].CGColor;
     
-    self.previousTextViewHeight = TextViewH;
-    
-    // addSubView
-    self.switchBarBtn = [self createBtn:BtnKindSwitchBar action:@selector(toolbarBtnClick:)];
-    self.switchBarBtn.hidden = YES;
-    self.voiceBtn = [self createBtn:BtnKindVoice action:@selector(toolbarBtnClick:)];
-    self.faceBtn = [self createBtn:BtnKindFace action:@selector(toolbarBtnClick:)];
-    self.moreBtn = [self createBtn:BtnKindMore action:@selector(toolbarBtnClick:)];
     self.recordBtn = [[RecordButton alloc] init];
-    
-    self.textView = [[XLTextView alloc] init];
-    self.textView.frame = CGRectMake(0, 0, 0, TextViewH);
-    self.textView.delegate = self;
     
     [self addSubview:self.voiceBtn];
     [self addSubview:self.faceBtn];
@@ -98,8 +82,6 @@ typedef NS_ENUM(NSInteger, BtnKind) {
     [self addSubview:self.textView];
     [self addSubview:self.recordBtn];
     
-    //设置frame
-//    [self setbarSubViewsFrame];
     
     //KVO
     [self addObserver:self forKeyPath:@"self.textView.contentSize" options:(NSKeyValueObservingOptionNew) context:nil];
@@ -156,8 +138,6 @@ typedef NS_ENUM(NSInteger, BtnKind) {
 
 - (void)layoutSubviews {
     
-    
-    
     CGFloat barViewH = self.frame.size.height;
     if (self.allowSwitchBar) {
         self.switchBarBtn.frame = CGRectMake(0, barViewH - ItemH, ItemW, ItemH);
@@ -175,7 +155,7 @@ typedef NS_ENUM(NSInteger, BtnKind) {
         self.moreBtn.frame = CGRectZero;
     }
     if (self.allowFace) {
-        self.faceBtn.frame = CGRectMake(CGRectGetMinX(self.moreBtn.frame) - ItemW, barViewH- ItemH, ItemW, ItemH);
+        self.faceBtn.frame = CGRectMake(self.frame.size.width - CGRectGetWidth(self.moreBtn.frame) - ItemW, barViewH- ItemH, ItemW, ItemH);
     } else {
         self.faceBtn.frame = CGRectZero;
     }
@@ -184,13 +164,7 @@ typedef NS_ENUM(NSInteger, BtnKind) {
     self.recordBtn.frame = self.textView.frame;
 }
 
-#pragma mark -- 对外接口
-- (void)loadBarItems:(NSArray<ChatToolBarItemModel *>  *)barItems {
-    for (ChatToolBarItemModel *model in barItems)
-    {
-        [self setBtn:(NSInteger)model.itemKind normalStateImageStr:model.normalStr selectStateImageStr:model.selectStr highLightStateImageStr:model.highLStr];
-    }
-}
+#pragma mark - 对外接口
 - (void)setTextViewContent:(NSString *)text {
     
     self.currentText = self.textView.text = text;
@@ -215,6 +189,7 @@ typedef NS_ENUM(NSInteger, BtnKind) {
 
 #pragma mark -- 重新配置各个按钮
 - (void)prepareForBeginComment {
+    
     self.voiceSelected = self.voiceBtn.selected = NO;
     self.faceSelected = self.faceBtn.selected = NO;
     self.moreFuncSelected = self.moreBtn.selected = NO;
@@ -222,6 +197,7 @@ typedef NS_ENUM(NSInteger, BtnKind) {
     self.textView.hidden = NO;
 }
 - (void)prepareForEndComment {
+    
     self.voiceSelected = self.voiceBtn.selected = NO;
     self.faceSelected = self.faceBtn.selected = NO;
     self.moreFuncSelected = self.moreBtn.selected = NO;
@@ -230,54 +206,6 @@ typedef NS_ENUM(NSInteger, BtnKind) {
     if ([self.textView isFirstResponder]) {
         [self.textView resignFirstResponder];
     }
-}
-
-#pragma mark -- 关于按钮
-- (void)setBtn:(BtnKind)btnKind normalStateImageStr:(NSString *)normalStr
-selectStateImageStr:(NSString *)selectStr highLightStateImageStr:(NSString *)highLightStr
-{
-    UIButton *btn;
-    
-    switch (btnKind) {
-        case BtnKindFace:
-            btn = self.faceBtn;
-            break;
-        case BtnKindMore:
-            btn = self.moreBtn;
-            break;
-        case BtnKindVoice:
-            btn = self.voiceBtn;
-            break;
-        case BtnKindSwitchBar:
-            btn = self.switchBarBtn;
-            break;
-        default:
-            break;
-    }
-    [btn setImage:Image(normalStr) forState:UIControlStateNormal];
-    [btn setImage:Image(selectStr) forState:UIControlStateSelected];
-    [btn setImage:Image(highLightStr) forState:UIControlStateHighlighted];
-}
-
-- (UIButton *)createBtn:(BtnKind)btnKind action:(SEL)sel {
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    switch (btnKind) {
-        case BtnKindVoice:
-            btn.tag = 1;
-            break;
-        case BtnKindFace:
-            btn.tag = 2;
-            break;
-        case BtnKindMore:
-            btn.tag = 3;
-            break;
-        case BtnKindSwitchBar:
-            btn.tag = 4;
-            break;
-    }
-    [btn addTarget:self action:sel forControlEvents:UIControlEventTouchUpInside];
-    btn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
-    return btn;
 }
 
 #pragma mark -- UITextViewDelegate
@@ -373,33 +301,57 @@ selectStateImageStr:(NSString *)selectStr highLightStateImageStr:(NSString *)hig
         [self.textView scrollRangeToVisible:NSMakeRange(self.textView.text.length - 2, 1)];
     }
 }
+#pragma mark -- 计算textViewContentSize改变
+
+- (CGFloat)getTextViewContentH:(XLTextView *)textView {
+   
+    return ceilf([textView sizeThatFits:textView.frame.size].height);
+}
+
+- (CGFloat)fontWidth {
+    return 36.f; //16号字体
+}
+
+- (CGFloat)maxLines {
+    CGFloat h = [[UIScreen mainScreen] bounds].size.height;
+    CGFloat line = 5;
+    if (h == 480) {
+        line = 3;
+    } else if (h == 568){
+        line = 3.5;
+    } else if (h == 667){
+        line = 4;
+    } else if (h == 736){
+        line = 4.5;
+    }
+    return line;
+}
+
 #pragma mark -- 工具栏按钮点击事件
 - (void)toolbarBtnClick:(UIButton *)sender {
     switch (sender.tag) {
         case 1:
         {
-            [self handelVoiceClick:sender];
+            [self handelSwitchBarClick:sender];
             break;
         }
         case 2:
         {
-            [self handelFaceClick:sender];
+            [self handelVoiceClick:sender];
             break;
         }
         case 3:
         {
-            [self handelMoreClick:sender];
+            [self handelFaceClick:sender];
             break;
         }
         case 4:
         {
-            [self handelSwitchBarClick:sender];
+            [self handelMoreClick:sender];
             break;
         }
-
     }
 }
-
 - (void)handelVoiceClick:(UIButton *)sender {
     self.voiceSelected = self.voiceBtn.selected = !self.voiceBtn.selected;
     self.faceSelected = self.faceBtn.selected = NO;
@@ -431,6 +383,7 @@ selectStateImageStr:(NSString *)selectStr highLightStateImageStr:(NSString *)hig
     self.voiceSelected = self.voiceBtn.selected = NO;
     self.moreFuncSelected = self.moreBtn.selected = NO;
     BOOL keyBoardChanged = YES;
+    
     if (sender.selected) {
         if (!self.textView.isFirstResponder) {
             keyBoardChanged = NO;
@@ -494,7 +447,18 @@ selectStateImageStr:(NSString *)selectStr highLightStateImageStr:(NSString *)hig
         [self.delegate chatToolBarSwitchToolBarBtnPressed:self keyBoardState:keyBoardChanged];
     }
 }
+- (void)adjustTextViewContentSize {
+    //调整textView和recordBtn的frame
+    self.currentText = self.textView.text;
+    self.textView.text = @"";
+    self.textView.contentSize = CGSizeMake(CGRectGetWidth(self.textView.frame), TextViewH);
+    self.recordBtn.frame = CGRectMake(self.textView.frame.origin.x, TextViewVerticalOffset, self.textView.frame.size.width, TextViewH);
+}
 
+- (void)resumeTextViewContentSize {
+    
+    self.textView.text = self.currentText;
+}
 #pragma mark - setter
 - (void)setAllowSwitchBar:(BOOL)allowSwitchBar {
     _allowSwitchBar = allowSwitchBar;
@@ -526,49 +490,62 @@ selectStateImageStr:(NSString *)selectStr highLightStateImageStr:(NSString *)hig
     [self setNeedsLayout];
 }
 
-- (void)adjustTextViewContentSize {
-    //调整textView和recordBtn的frame
-    self.currentText = self.textView.text;
-    self.textView.text = @"";
-    self.textView.contentSize = CGSizeMake(CGRectGetWidth(self.textView.frame), TextViewH);
-    self.recordBtn.frame = CGRectMake(self.textView.frame.origin.x, TextViewVerticalOffset, self.textView.frame.size.width, TextViewH);
-}
-- (void)resumeTextViewContentSize {
-    
-    self.textView.text = self.currentText;
-}
+#pragma mark - lazy
 
-
-
-
-#pragma mark -- 计算textViewContentSize改变
-
-- (CGFloat)getTextViewContentH:(XLTextView *)textView {
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
-        return ceilf([textView sizeThatFits:textView.frame.size].height);
-    } else {
-        return textView.contentSize.height;
+- (UIButton *)switchBarBtn {
+    if (!_switchBarBtn) {
+        _switchBarBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _switchBarBtn.hidden = YES;
+        _switchBarBtn.tag = 1;
+        [_switchBarBtn setImage:Image(@"switchDown") forState:UIControlStateNormal];
+        [_switchBarBtn addTarget:self action:@selector(toolbarBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        _switchBarBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     }
+    return _switchBarBtn;
 }
 
-- (CGFloat)fontWidth
-{
-    return 36.f; //16号字体
-}
-
-- (CGFloat)maxLines {
-    CGFloat h = [[UIScreen mainScreen] bounds].size.height;
-    CGFloat line = 5;
-    if (h == 480) {
-        line = 3;
-    } else if (h == 568){
-        line = 3.5;
-    } else if (h == 667){
-        line = 4;
-    } else if (h == 736){
-        line = 4.5;
+- (UIButton *)voiceBtn {
+    if (!_voiceBtn) {
+        _voiceBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _voiceBtn.tag = 2;
+        [_voiceBtn setImage:Image(@"voice") forState:UIControlStateNormal];
+        [_voiceBtn setImage:Image(@"keyboard") forState:UIControlStateSelected];
+        [_voiceBtn setImage:Image(@"voice_HL") forState:UIControlStateHighlighted];
+        [_voiceBtn addTarget:self action:@selector(toolbarBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        _voiceBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     }
-    return line;
+    return _voiceBtn;
+}
+- (XLTextView *)textView {
+    if (!_textView) {
+        _textView = [[XLTextView alloc] init];
+        _textView.frame = CGRectMake(0, 0, 0, TextViewH);
+        _textView.delegate = self;
+    }
+    return _textView;
+}
+- (UIButton *)faceBtn {
+    if (!_faceBtn) {
+        _faceBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _faceBtn.tag = 3;
+        [_faceBtn setImage:Image(@"face") forState:UIControlStateNormal];
+        [_faceBtn setImage:Image(@"keyboard") forState:UIControlStateSelected];
+        [_faceBtn setImage:Image(@"face_HL") forState:UIControlStateHighlighted];
+        [_faceBtn addTarget:self action:@selector(toolbarBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        _faceBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    }
+    return _faceBtn;
+}
+- (UIButton *)moreBtn {
+    if (!_moreBtn) {
+        _moreBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _moreBtn.tag = 4;
+        [_moreBtn setImage:Image(@"more_ios") forState:UIControlStateNormal];
+        [_moreBtn setImage:Image(@"more_ios_HL") forState:UIControlStateHighlighted];
+        [_moreBtn addTarget:self action:@selector(toolbarBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        _moreBtn.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+    }
+    return _moreBtn;
 }
 
 @end

@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		914364AD1F58F59800C10580 /* FaceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 914364AC1F58F59800C10580 /* FaceView.m */; };
+		914364B31F58F9A000C10580 /* FaceSourceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 914364B21F58F9A000C10580 /* FaceSourceManager.m */; };
+		914364B61F590F4B00C10580 /* SmallSizePageFaceViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 914364B51F590F4B00C10580 /* SmallSizePageFaceViewCell.m */; };
+		914364B91F590F7900C10580 /* MiddleSizePageFaceViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 914364B81F590F7900C10580 /* MiddleSizePageFaceViewCell.m */; };
+		914364BC1F5926D300C10580 /* FaceButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 914364BB1F5926D300C10580 /* FaceButton.m */; };
+		914364BF1F59354400C10580 /* emotion.plist in Resources */ = {isa = PBXBuildFile; fileRef = 914364BD1F59354400C10580 /* emotion.plist */; };
+		914364C01F59354400C10580 /* face.plist in Resources */ = {isa = PBXBuildFile; fileRef = 914364BE1F59354400C10580 /* face.plist */; };
+		91F16EBE1F57D0D0009A7C7F /* FaceBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F16EBD1F57D0D0009A7C7F /* FaceBottomView.m */; };
+		91F16EC11F57F2A9009A7C7F /* FaceSubjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F16EC01F57F2A9009A7C7F /* FaceSubjectModel.m */; };
 		91FA85BE1F4E7F1900D4CD76 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA85BD1F4E7F1900D4CD76 /* main.m */; };
 		91FA85C11F4E7F1900D4CD76 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA85C01F4E7F1900D4CD76 /* AppDelegate.m */; };
 		91FA85C41F4E7F1900D4CD76 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA85C31F4E7F1900D4CD76 /* ViewController.m */; };
@@ -20,15 +29,28 @@
 		91FA85F31F4EB63800D4CD76 /* ChatToolBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA85EE1F4EB63800D4CD76 /* ChatToolBar.m */; };
 		91FA85F41F4EB63800D4CD76 /* RecordButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA85F01F4EB63800D4CD76 /* RecordButton.m */; };
 		91FA85F51F4EB63800D4CD76 /* XLTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA85F21F4EB63800D4CD76 /* XLTextView.m */; };
-		91FA85F81F4EB68B00D4CD76 /* ChatToolBarItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA85F71F4EB68B00D4CD76 /* ChatToolBarItemModel.m */; };
 		91FA85FC1F4EC8DF00D4CD76 /* FacePanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA85FB1F4EC8DF00D4CD76 /* FacePanel.m */; };
 		91FA86001F4EC90000D4CD76 /* MorePanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA85FF1F4EC90000D4CD76 /* MorePanel.m */; };
 		91FA86031F4EC9B300D4CD76 /* OfficialAccountToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA86021F4EC9B300D4CD76 /* OfficialAccountToolbar.m */; };
-		91FA86061F4ED4BB00D4CD76 /* FaceSubjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA86051F4ED4BB00D4CD76 /* FaceSubjectModel.m */; };
-		91FA86091F4ED4CB00D4CD76 /* MoreItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 91FA86081F4ED4CB00D4CD76 /* MoreItemModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		914364AB1F58F59800C10580 /* FaceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceView.h; sourceTree = "<group>"; };
+		914364AC1F58F59800C10580 /* FaceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaceView.m; sourceTree = "<group>"; };
+		914364B11F58F9A000C10580 /* FaceSourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceSourceManager.h; sourceTree = "<group>"; };
+		914364B21F58F9A000C10580 /* FaceSourceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaceSourceManager.m; sourceTree = "<group>"; };
+		914364B41F590F4B00C10580 /* SmallSizePageFaceViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallSizePageFaceViewCell.h; sourceTree = "<group>"; };
+		914364B51F590F4B00C10580 /* SmallSizePageFaceViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmallSizePageFaceViewCell.m; sourceTree = "<group>"; };
+		914364B71F590F7900C10580 /* MiddleSizePageFaceViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MiddleSizePageFaceViewCell.h; sourceTree = "<group>"; };
+		914364B81F590F7900C10580 /* MiddleSizePageFaceViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MiddleSizePageFaceViewCell.m; sourceTree = "<group>"; };
+		914364BA1F5926D300C10580 /* FaceButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceButton.h; sourceTree = "<group>"; };
+		914364BB1F5926D300C10580 /* FaceButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaceButton.m; sourceTree = "<group>"; };
+		914364BD1F59354400C10580 /* emotion.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = emotion.plist; sourceTree = "<group>"; };
+		914364BE1F59354400C10580 /* face.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = face.plist; sourceTree = "<group>"; };
+		91F16EBC1F57D0D0009A7C7F /* FaceBottomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceBottomView.h; sourceTree = "<group>"; };
+		91F16EBD1F57D0D0009A7C7F /* FaceBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaceBottomView.m; sourceTree = "<group>"; };
+		91F16EBF1F57F2A9009A7C7F /* FaceSubjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceSubjectModel.h; sourceTree = "<group>"; };
+		91F16EC01F57F2A9009A7C7F /* FaceSubjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaceSubjectModel.m; sourceTree = "<group>"; };
 		91FA85B91F4E7F1900D4CD76 /* ChatKeyBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatKeyBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91FA85BD1F4E7F1900D4CD76 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		91FA85BF1F4E7F1900D4CD76 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -53,18 +75,12 @@
 		91FA85F01F4EB63800D4CD76 /* RecordButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordButton.m; sourceTree = "<group>"; };
 		91FA85F11F4EB63800D4CD76 /* XLTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLTextView.h; sourceTree = "<group>"; };
 		91FA85F21F4EB63800D4CD76 /* XLTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLTextView.m; sourceTree = "<group>"; };
-		91FA85F61F4EB68B00D4CD76 /* ChatToolBarItemModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatToolBarItemModel.h; sourceTree = "<group>"; };
-		91FA85F71F4EB68B00D4CD76 /* ChatToolBarItemModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatToolBarItemModel.m; sourceTree = "<group>"; };
 		91FA85FA1F4EC8DF00D4CD76 /* FacePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacePanel.h; sourceTree = "<group>"; };
 		91FA85FB1F4EC8DF00D4CD76 /* FacePanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacePanel.m; sourceTree = "<group>"; };
 		91FA85FE1F4EC90000D4CD76 /* MorePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MorePanel.h; sourceTree = "<group>"; };
 		91FA85FF1F4EC90000D4CD76 /* MorePanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MorePanel.m; sourceTree = "<group>"; };
 		91FA86011F4EC9B300D4CD76 /* OfficialAccountToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfficialAccountToolbar.h; sourceTree = "<group>"; };
 		91FA86021F4EC9B300D4CD76 /* OfficialAccountToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OfficialAccountToolbar.m; sourceTree = "<group>"; };
-		91FA86041F4ED4BB00D4CD76 /* FaceSubjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceSubjectModel.h; sourceTree = "<group>"; };
-		91FA86051F4ED4BB00D4CD76 /* FaceSubjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FaceSubjectModel.m; sourceTree = "<group>"; };
-		91FA86071F4ED4CB00D4CD76 /* MoreItemModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoreItemModel.h; sourceTree = "<group>"; };
-		91FA86081F4ED4CB00D4CD76 /* MoreItemModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MoreItemModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,12 +155,12 @@
 		91FA85EA1F4EB63800D4CD76 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				91FA85F61F4EB68B00D4CD76 /* ChatToolBarItemModel.h */,
-				91FA85F71F4EB68B00D4CD76 /* ChatToolBarItemModel.m */,
-				91FA86041F4ED4BB00D4CD76 /* FaceSubjectModel.h */,
-				91FA86051F4ED4BB00D4CD76 /* FaceSubjectModel.m */,
-				91FA86071F4ED4CB00D4CD76 /* MoreItemModel.h */,
-				91FA86081F4ED4CB00D4CD76 /* MoreItemModel.m */,
+				91F16EBF1F57F2A9009A7C7F /* FaceSubjectModel.h */,
+				91F16EC01F57F2A9009A7C7F /* FaceSubjectModel.m */,
+				914364B11F58F9A000C10580 /* FaceSourceManager.h */,
+				914364B21F58F9A000C10580 /* FaceSourceManager.m */,
+				914364BD1F59354400C10580 /* emotion.plist */,
+				914364BE1F59354400C10580 /* face.plist */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -180,6 +196,16 @@
 			children = (
 				91FA85FA1F4EC8DF00D4CD76 /* FacePanel.h */,
 				91FA85FB1F4EC8DF00D4CD76 /* FacePanel.m */,
+				914364AB1F58F59800C10580 /* FaceView.h */,
+				914364AC1F58F59800C10580 /* FaceView.m */,
+				914364BA1F5926D300C10580 /* FaceButton.h */,
+				914364BB1F5926D300C10580 /* FaceButton.m */,
+				914364B41F590F4B00C10580 /* SmallSizePageFaceViewCell.h */,
+				914364B51F590F4B00C10580 /* SmallSizePageFaceViewCell.m */,
+				914364B71F590F7900C10580 /* MiddleSizePageFaceViewCell.h */,
+				914364B81F590F7900C10580 /* MiddleSizePageFaceViewCell.m */,
+				91F16EBC1F57D0D0009A7C7F /* FaceBottomView.h */,
+				91F16EBD1F57D0D0009A7C7F /* FaceBottomView.m */,
 			);
 			path = FacePanel;
 			sourceTree = "<group>";
@@ -254,8 +280,10 @@
 			files = (
 				91FA85CC1F4E7F1900D4CD76 /* LaunchScreen.storyboard in Resources */,
 				91FA85D41F4E7F4600D4CD76 /* Default-568h@2x.png in Resources */,
+				914364BF1F59354400C10580 /* emotion.plist in Resources */,
 				91FA85C91F4E7F1900D4CD76 /* Assets.xcassets in Resources */,
 				91FA85C71F4E7F1900D4CD76 /* Main.storyboard in Resources */,
+				914364C01F59354400C10580 /* face.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,18 +295,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				91FA85F31F4EB63800D4CD76 /* ChatToolBar.m in Sources */,
-				91FA86061F4ED4BB00D4CD76 /* FaceSubjectModel.m in Sources */,
+				91F16EC11F57F2A9009A7C7F /* FaceSubjectModel.m in Sources */,
 				91FA86031F4EC9B300D4CD76 /* OfficialAccountToolbar.m in Sources */,
 				91FA85DE1F4E972B00D4CD76 /* ChatKeyBoard.m in Sources */,
 				91FA85DA1F4E816300D4CD76 /* SecondViewController.m in Sources */,
 				91FA85C41F4E7F1900D4CD76 /* ViewController.m in Sources */,
+				914364B91F590F7900C10580 /* MiddleSizePageFaceViewCell.m in Sources */,
 				91FA85FC1F4EC8DF00D4CD76 /* FacePanel.m in Sources */,
+				914364BC1F5926D300C10580 /* FaceButton.m in Sources */,
 				91FA86001F4EC90000D4CD76 /* MorePanel.m in Sources */,
-				91FA85F81F4EB68B00D4CD76 /* ChatToolBarItemModel.m in Sources */,
 				91FA85F41F4EB63800D4CD76 /* RecordButton.m in Sources */,
-				91FA86091F4ED4CB00D4CD76 /* MoreItemModel.m in Sources */,
+				914364B31F58F9A000C10580 /* FaceSourceManager.m in Sources */,
+				91F16EBE1F57D0D0009A7C7F /* FaceBottomView.m in Sources */,
 				91FA85C11F4E7F1900D4CD76 /* AppDelegate.m in Sources */,
+				914364B61F590F4B00C10580 /* SmallSizePageFaceViewCell.m in Sources */,
 				91FA85BE1F4E7F1900D4CD76 /* main.m in Sources */,
+				914364AD1F58F59800C10580 /* FaceView.m in Sources */,
 				91FA85F51F4EB63800D4CD76 /* XLTextView.m in Sources */,
 				91FA85D71F4E815000D4CD76 /* FirstViewController.m in Sources */,
 			);

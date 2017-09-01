@@ -39,19 +39,9 @@
 
 @property (nonatomic, weak) id<ChatToolBarDelegate> delegate;
 
-/** 切换barView按钮 */
-@property (nonatomic, readonly, strong) UIButton *switchBarBtn;
-/** 语音按钮 */
-@property (nonatomic, readonly, strong) UIButton *voiceBtn;
-/** 表情按钮 */
-@property (nonatomic, readonly, strong) UIButton *faceBtn;
-/** more按钮 */
-@property (nonatomic, readonly, strong) UIButton *moreBtn;
-/** 输入文本框 */
-@property (nonatomic, readonly, strong) XLTextView *textView;
-/** 按住录制语音按钮 */
-@property (nonatomic, readonly, strong) RecordButton *recordBtn;
 
+/** 输入文本框 */
+@property (nonatomic, strong) XLTextView *textView;
 
 /** 默认为no */
 @property (nonatomic, assign) BOOL allowSwitchBar;
@@ -60,10 +50,10 @@
 @property (nonatomic, assign) BOOL allowFace;
 @property (nonatomic, assign) BOOL allowMoreFunc;
 
-@property (readonly) BOOL voiceSelected;
-@property (readonly) BOOL faceSelected;
-@property (readonly) BOOL moreFuncSelected;
-@property (readonly) BOOL switchBarSelected;
+@property (nonatomic, assign) BOOL voiceSelected;
+@property (nonatomic, assign) BOOL faceSelected;
+@property (nonatomic, assign) BOOL moreFuncSelected;
+@property (nonatomic, assign) BOOL switchBarSelected;
 
 /**
  *  配置textView内容
@@ -83,10 +73,5 @@
 - (void)prepareForBeginComment;
 - (void)prepareForEndComment;
 
-
-/**
- *  加载数据
- */
-- (void)loadBarItems:(NSArray<ChatToolBarItemModel *>  *)barItems;
 
 @end

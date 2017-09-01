@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@class MoreItemModel;
 @class MorePanel;
 
 @protocol MorePanelDelegate <NSObject>
@@ -18,11 +17,11 @@
 
 @end
 
+
 @interface MorePanel : UIView
 
 @property (nonatomic, weak) id<MorePanelDelegate> delegate;
 
-+ (instancetype)morePanel;
--(void)loadMoreItems:(NSArray<MoreItemModel *> *)items;
++ (instancetype)morePannel;
 
 @end

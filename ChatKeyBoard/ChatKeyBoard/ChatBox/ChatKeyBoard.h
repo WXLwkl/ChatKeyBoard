@@ -59,16 +59,16 @@ typedef NS_ENUM(NSInteger, KeyBoardStyle) {
 
 @end
 
-#pragma mark - DataSource
-
-@protocol ChatKeyBoardDataSource <NSObject>
-
-@required //必须
-- (NSArray<MoreItemModel *> *)chatKeyBoardMorePanelItems;
-- (NSArray<ChatToolBarItemModel *> *)chatKeyBoardToolbarItems;
-- (NSArray<FaceSubjectModel *> *)chatKeyBoardFacePanelSubjectItems;
-
-@end
+//#pragma mark - DataSource
+//
+//@protocol ChatKeyBoardDataSource <NSObject>
+//
+//@required //必须
+//- (NSArray<MoreItemModel *> *)chatKeyBoardMorePanelItems;
+//- (NSArray<ChatToolBarItemModel *> *)chatKeyBoardToolbarItems;
+//- (NSArray<FaceSubjectModel *> *)chatKeyBoardFacePanelSubjectItems;
+//
+//@end
 
 
 #pragma mark - view
@@ -101,12 +101,12 @@ typedef NS_ENUM(NSInteger, KeyBoardStyle) {
 + (instancetype)keyBoardWithParentViewBounds:(CGRect)bounds;
 
 
-@property (nonatomic, weak) id <ChatKeyBoardDataSource> dataSource;
+//@property (nonatomic, weak) id <ChatKeyBoardDataSource> dataSource;
 @property (nonatomic, weak) id <ChatKeyBoardDelegate> delegate;
 
-@property (nonatomic, readonly, strong) ChatToolBar *chatToolBar;
-@property (nonatomic, readonly, strong) FacePanel *facePanel;
-@property (nonatomic, readonly, strong) MorePanel *morePanel;
+//@property (nonatomic, readonly, strong) ChatToolBar *chatToolBar;
+//@property (nonatomic, readonly, strong) FacePanel *facePanel;
+//@property (nonatomic, readonly, strong) MorePanel *morePanel;
 
 /**
  *  设置键盘的风格
