@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+@class FaceSubjectModel;
+
 
 @interface FacePanel : UIView
 
+
+//@property (nonatomic, weak) id<FacePanelDelegate> delegate;
+
+- (void)loadFaceSubjectItems:(NSArray<FaceSubjectModel *>*)subjectItems;
 @end

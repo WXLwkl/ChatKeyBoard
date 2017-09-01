@@ -7,6 +7,7 @@
 //
 #import "Header.h"
 #import "ChatKeyBoard.h"
+
 #import "ChatToolBar.h"
 #import "FacePanel.h"
 #import "MorePanel.h"
@@ -15,6 +16,7 @@
 #import "ChatToolBarItemModel.h"
 #import "FaceSubjectModel.h"
 #import "MoreItemModel.h"
+
 CGFloat getSupviewH(CGRect frame) {
     return frame.origin.y + kChatToolBarHeight;
 }
@@ -47,6 +49,7 @@ CGFloat getDifferenceH(CGRect frame) {
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+    
     [self removeObserver:self forKeyPath:@"self.chatToolBar.frame"];
 }
 
@@ -103,6 +106,7 @@ CGFloat getDifferenceH(CGRect frame) {
         };
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+        
         [self addObserver:self forKeyPath:@"self.chatToolBar.frame" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
         
     }
@@ -188,42 +192,96 @@ CGFloat getDifferenceH(CGRect frame) {
 
 #pragma mark -- ChatToolBarDelegate
 - (void)chatToolBar:(ChatToolBar *)toolBar voiceBtnPressed:(BOOL)select keyBoardState:(BOOL)change {
-    
+    if (select && change == NO) {
+        [UIView animateWithDuration:0.25 animations:^{
+            CGFloat y = self.frame.origin.y;
+            y = getSupviewH(self.keyboardInitialFrame) - self.chatToolBar.frame.size.height;
+            self.frame = CGRectMake(0, y, self.frame.size.width, self.frame.size.height);
+        }];
+    }
 }
 - (void)chatToolBar:(ChatToolBar *)toolBar faceBtnPressed:(BOOL)select keyBoardState:(BOOL)change {
     
+    if (select && change == NO) {
+        self.morePanel.hidden = YES;
+        self.facePanel.hidden = NO;
+        [UIView animateWithDuration:0.25 animations:^{
+            self.frame = CGRectMake(0, getSupviewH(self.keyboardInitialFrame)-CGRectGetHeight(self.frame), kScreenWidth, CGRectGetHeight(self.frame));
+            self.facePanel.frame = CGRectMake(0, CGRectGetHeight(self.frame)-kFacePanelHeight, CGRectGetWidth(self.frame), kFacePanelHeight);
+            self.morePanel.frame = CGRectMake(0, CGRectGetHeight(self.frame), CGRectGetWidth(self.frame), kFacePanelHeight);
+        }];
+    }
 }
 - (void)chatToolBar:(ChatToolBar *)toolBar moreBtnPressed:(BOOL)select keyBoardState:(BOOL)change {
     
+    if (select && change == NO) {
+        self.morePanel.hidden = NO;
+        self.facePanel.hidden = YES;
+        [UIView animateWithDuration:0.25 animations:^{
+            self.frame = CGRectMake(0, getSupviewH(self.keyboardInitialFrame)-CGRectGetHeight(self.frame), kScreenWidth, CGRectGetHeight(self.frame));
+            self.morePanel.frame = CGRectMake(0, CGRectGetHeight(self.frame)-kMorePanelHeight, CGRectGetWidth(self.frame), kMorePanelHeight);
+            self.facePanel.frame = CGRectMake(0, CGRectGetHeight(self.frame), CGRectGetWidth(self.frame), kFacePanelHeight);
+        }];
+    }
 }
 - (void)chatToolBarSwitchToolBarBtnPressed:(ChatToolBar *)toolBar keyBoardState:(BOOL)change {
-    
+    if (change == NO) {
+        [UIView animateWithDuration:0.25 animations:^{
+            CGFloat y = self.frame.origin.y;
+            y = getSupviewH(self.keyboardInitialFrame) - kChatToolBarHeight;
+            self.frame = CGRectMake(0,getSupviewH(self.keyboardInitialFrame), self.frame.size.width, self.frame.size.height);
+            self.OAtoolbar.frame = CGRectMake(0, 0, self.frame.size.width, kChatToolBarHeight);
+            self.frame = CGRectMake(0, y, self.frame.size.width, self.frame.size.height);
+        }];
+    } else {
+        CGFloat y = getSupviewH(self.keyboardInitialFrame) - kChatToolBarHeight;
+        self.frame = CGRectMake(0, getSupviewH(self.keyboardInitialFrame), self.frame.size.width, self.frame.size.height);
+        self.OAtoolbar.frame = CGRectMake(0, 0, self.frame.size.width, kChatToolBarHeight);
+        self.frame = CGRectMake(0, y, self.frame.size.width, self.frame.size.height);
+    }
 }
 
 - (void)chatToolBarDidStartRecording:(ChatToolBar *)toolBar {
-    
+    if ([self.delegate respondsToSelector:@selector(chatKeyBoardDidStartRecording:)]) {
+        [self.delegate chatKeyBoardDidStartRecording:self];
+    }
 }
 - (void)chatToolBarDidCancelRecording:(ChatToolBar *)toolBar {
-    
+    if ([self.delegate respondsToSelector:@selector(chatKeyBoardDidCancelRecording:)]) {
+        [self.delegate chatKeyBoardDidCancelRecording:self];
+    }
 }
 - (void)chatToolBarDidFinishRecoding:(ChatToolBar *)toolBar {
-    
+    if ([self.delegate respondsToSelector:@selector(chatKeyBoardDidFinishRecoding:)]) {
+        [self.delegate chatKeyBoardDidFinishRecoding:self];
+    }
 }
 - (void)chatToolBarWillCancelRecoding:(ChatToolBar *)toolBar {
-    
+    if ([self.delegate respondsToSelector:@selector(chatKeyBoardWillCancelRecoding:)]) {
+        [self.delegate chatKeyBoardWillCancelRecoding:self];
+    }
 }
 - (void)chatToolBarContineRecording:(ChatToolBar *)toolBar {
-    
+    if ([self.delegate respondsToSelector:@selector(chatKeyBoardContineRecording:)]) {
+        [self.delegate chatKeyBoardContineRecording:self];
+    }
 }
 
 - (void)chatToolBarTextViewDidBeginEditing:(UITextView *)textView {
-    
+    if ([self.delegate respondsToSelector:@selector(chatKeyBoardTextViewDidBeginEditing:)]) {
+        [self.delegate chatKeyBoardTextViewDidBeginEditing:textView];
+    }
 }
 - (void)chatToolBarTextViewDidChange:(UITextView *)textView {
-    
+    if ([self.delegate respondsToSelector:@selector(chatKeyBoardTextViewDidChange:)]) {
+        [self.delegate chatKeyBoardTextViewDidChange:textView];
+    }
 }
 - (void)chatToolBarSendText:(NSString *)text {
-    
+    if ([self.delegate respondsToSelector:@selector(chatKeyBoardSendText:)]) {
+        [self.delegate chatKeyBoardSendText:text];
+    }
+    [self.chatToolBar clearTextViewContent];
 }
 
 #pragma mark -- dataSource
@@ -245,6 +303,52 @@ CGFloat getDifferenceH(CGRect frame) {
         NSArray<FaceSubjectModel *> *subjectMItems = [self.dataSource chatKeyBoardFacePanelSubjectItems];
         [self.facePanel loadFaceSubjectItems:subjectMItems];
     }
+}
+
+#pragma mark - setter
+- (void)setPlaceHolder:(NSString *)placeHolder {
+    _placeHolder = placeHolder;
+    [self.chatToolBar setTextViewPlaceHolder:placeHolder];
+}
+- (void)setPlaceHolderColor:(UIColor *)placeHolderColor {
+    _placeHolderColor = placeHolderColor;
+    [self.chatToolBar setTextViewPlaceHolderColor:placeHolderColor];
+}
+- (void)setAllowVoice:(BOOL)allowVoice {
+    self.chatToolBar.allowVoice = allowVoice;
+}
+- (void)setAllowFace:(BOOL)allowFace {
+    self.chatToolBar.allowFace = allowFace;
+}
+- (void)setAllowMore:(BOOL)allowMore {
+    self.chatToolBar.allowMoreFunc = allowMore;
+}
+- (void)setAllowSwitchBar:(BOOL)allowSwitchBar {
+    self.chatToolBar.allowSwitchBar = allowSwitchBar;
+}
+- (void)setKeyBoardStyle:(KeyBoardStyle)keyBoardStyle {
+    _keyBoardStyle = keyBoardStyle;
+    if (keyBoardStyle == KeyBoardStyleComment) {
+        self.frame = CGRectMake(0, self.frame.origin.y + kChatToolBarHeight, self.frame.size.width, self.frame.size.height);
+    }
+}
+- (void)beginComment {
+    if (self.keyBoardStyle != KeyBoardStyleComment) {
+        NSException *excep = [NSException exceptionWithName:@"ChatKeyBoardException" reason:@"键盘未开启评论风格" userInfo:nil];
+        [excep raise];
+    }
+    [self.chatToolBar prepareForBeginComment];
+    [self.chatToolBar.textView becomeFirstResponder];
+}
+- (void)endComment {
+    if (self.keyBoardStyle != KeyBoardStyleComment) {
+        NSException *excep = [NSException exceptionWithName:@"ChatKeyBoardException" reason:@"键盘未开启评论风格" userInfo:nil];
+        [excep raise];
+    }
+    [UIView animateWithDuration:0.25 delay:0 options:(UIViewAnimationOptionCurveLinear) animations:^{
+        [self.chatToolBar prepareForEndComment];
+        self.frame = CGRectMake(0, getSupviewH(self.keyboardInitialFrame), self.frame.size.width, CGRectGetHeight(self.frame));
+    } completion:nil];
 }
 
 @end

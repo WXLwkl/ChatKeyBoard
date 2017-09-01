@@ -75,7 +75,7 @@ typedef NS_ENUM(NSInteger, BtnKind) {
 - (void)initSubviews {
     self.backgroundColor = [UIColor colorWithRed:247.0/255.0 green:247.0/255.0 blue:247.0/255.0 alpha:1.0];
     self.layer.borderWidth = 1;
-    self.layer.borderColor = [UIColor blackColor].CGColor;
+    self.layer.borderColor = [UIColor colorWithRed:215.0/255.0 green:215/255.0 blue:217/255.0 alpha:1.0].CGColor;
     
     self.previousTextViewHeight = TextViewH;
     
@@ -99,7 +99,7 @@ typedef NS_ENUM(NSInteger, BtnKind) {
     [self addSubview:self.recordBtn];
     
     //设置frame
-    [self setbarSubViewsFrame];
+//    [self setbarSubViewsFrame];
     
     //KVO
     [self addObserver:self forKeyPath:@"self.textView.contentSize" options:(NSKeyValueObservingOptionNew) context:nil];
@@ -154,7 +154,10 @@ typedef NS_ENUM(NSInteger, BtnKind) {
     };
 }
 
-- (void)setbarSubViewsFrame {
+- (void)layoutSubviews {
+    
+    
+    
     CGFloat barViewH = self.frame.size.height;
     if (self.allowSwitchBar) {
         self.switchBarBtn.frame = CGRectMake(0, barViewH - ItemH, ItemW, ItemH);
@@ -176,7 +179,7 @@ typedef NS_ENUM(NSInteger, BtnKind) {
     } else {
         self.faceBtn.frame = CGRectZero;
     }
-    self.textView.frame = CGRectMake(CGRectGetMaxX(self.voiceBtn.frame), TextViewVerticalOffset, CGRectGetMinX(self.faceBtn.frame) - CGRectGetMaxX(self.voiceBtn.frame) , self.textView.frame.size.height);
+    self.textView.frame = CGRectMake(CGRectGetWidth(self.switchBarBtn.frame) + CGRectGetWidth(self.voiceBtn.frame), TextViewVerticalOffset, self.frame.size.width-CGRectGetWidth(self.switchBarBtn.frame)-CGRectGetWidth(self.voiceBtn.frame)-CGRectGetWidth(self.faceBtn.frame)-CGRectGetWidth(self.moreBtn.frame), self.textView.frame.size.height);
     
     self.recordBtn.frame = self.textView.frame;
 }
@@ -308,6 +311,7 @@ selectStateImageStr:(NSString *)selectStr highLightStateImageStr:(NSString *)hig
     }
 }
 
+#pragma mark - kvo
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     
     if (object == self && [keyPath isEqualToString:@"self.textView.contentSize"]) {
@@ -496,7 +500,9 @@ selectStateImageStr:(NSString *)selectStr highLightStateImageStr:(NSString *)hig
     _allowSwitchBar = allowSwitchBar;
     
     self.switchBarBtn.hidden = !_allowSwitchBar;
-    [self setbarSubViewsFrame];
+//    [self layoutIfNeeded];
+    //    [self setbarSubViewsFrame];
+    [self setNeedsLayout];
 }
 
 - (void)setAllowVoice:(BOOL)allowVoice {
@@ -504,20 +510,20 @@ selectStateImageStr:(NSString *)selectStr highLightStateImageStr:(NSString *)hig
     _allowVoice = allowVoice;
     
     self.voiceBtn.hidden = !_allowVoice;
-    [self setbarSubViewsFrame];
+    [self setNeedsLayout];
 }
 - (void)setAllowFace:(BOOL)allowFace {
     _allowFace = allowFace;
     
     self.faceBtn.hidden = !_allowFace;
-    [self setbarSubViewsFrame];
+    [self setNeedsLayout];
 }
 - (void)setAllowMoreFunc:(BOOL)allowMoreFunc {
     
     _allowMoreFunc = allowMoreFunc;
     
     self.moreBtn.hidden = !_allowMoreFunc;
-    [self setbarSubViewsFrame];
+    [self setNeedsLayout];
 }
 
 - (void)adjustTextViewContentSize {
@@ -564,8 +570,6 @@ selectStateImageStr:(NSString *)selectStr highLightStateImageStr:(NSString *)hig
     }
     return line;
 }
-
-
 
 @end
 

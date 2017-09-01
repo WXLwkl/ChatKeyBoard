@@ -17,5 +17,9 @@
     // Drawing code
 }
 */
+- (void)loadFaceSubjectItems:(NSArray<FaceSubjectModel *> *)subjectItems {
+    
+}
+
 
 @end

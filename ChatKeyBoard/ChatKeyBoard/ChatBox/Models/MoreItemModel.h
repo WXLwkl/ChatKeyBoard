@@ -10,4 +10,11 @@
 
 @interface MoreItemModel : NSObject
 
+@property (nonatomic, copy) NSString *itemPicName;
+@property (nonatomic, copy) NSString *itemHightlightPicName;
+@property (nonatomic, copy) NSString *itemName;
+
++ (instancetype)moreItemWithPicName:(NSString *)pickName highLightPicName:(NSString *)highLightPicName itemName:(NSString *)itemName;
+
+
 @end

@@ -19,6 +19,10 @@ typedef NS_ENUM(NSInteger, KeyBoardStyle) {
 @class FacePanel;
 @class MorePanel;
 
+@class MoreItemModel;
+@class ChatToolBarItemModel;
+@class FaceSubjectModel;
+
 #pragma mark - delegate
 
 @protocol ChatKeyBoardDelegate <NSObject>
@@ -60,9 +64,9 @@ typedef NS_ENUM(NSInteger, KeyBoardStyle) {
 @protocol ChatKeyBoardDataSource <NSObject>
 
 @required //必须
-- (NSArray *)chatKeyBoardMorePanelItems;
-- (NSArray *)chatKeyBoardToolbarItems;
-- (NSArray *)chatKeyBoardFacePanelSubjectItems;
+- (NSArray<MoreItemModel *> *)chatKeyBoardMorePanelItems;
+- (NSArray<ChatToolBarItemModel *> *)chatKeyBoardToolbarItems;
+- (NSArray<FaceSubjectModel *> *)chatKeyBoardFacePanelSubjectItems;
 
 @end
 
