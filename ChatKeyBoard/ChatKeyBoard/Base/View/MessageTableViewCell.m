@@ -229,6 +229,8 @@ static const CGFloat kUserNameLabelHeight = 20;
 }
 
 - (void)configureMessageBubbleViewWithMessage:(id <MessageModel>)message {
+    
+    
     BubbleMessageMediaType currentMediaType = message.messageMediaType;
     for (UIGestureRecognizer *gesTureRecognizer in self.messageBubbleView.bubbleImageView.gestureRecognizers) {
         [self.messageBubbleView.bubbleImageView removeGestureRecognizer:gesTureRecognizer];
@@ -281,9 +283,10 @@ static const CGFloat kUserNameLabelHeight = 20;
 }
 
 - (void)longPressGestureRecognizerHandle:(UILongPressGestureRecognizer *)longPressGestureRecognizer {
+    
     if (longPressGestureRecognizer.state != UIGestureRecognizerStateBegan || ![self becomeFirstResponder])
         return;
-    
+        
     NSArray *popMenuTitles = [[ConfigurationHelper appearance] popMenuTitles];
     NSMutableArray *menuItems = [[NSMutableArray alloc] init];
     for (int i = 0; i < popMenuTitles.count; i ++) {
@@ -332,6 +335,7 @@ static const CGFloat kUserNameLabelHeight = 20;
                                              selector:@selector(handleMenuWillShowNotification:)
                                                  name:UIMenuControllerWillShowMenuNotification
                                                object:nil];
+     
     [menu setMenuVisible:YES animated:YES];
 }
 
@@ -405,6 +409,7 @@ static const CGFloat kUserNameLabelHeight = 20;
     
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognizerHandle:)];
     [self addGestureRecognizer:tapGestureRecognizer];
+
 }
 
 - (instancetype)initWithMessage:(id <MessageModel>)message

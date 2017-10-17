@@ -15,17 +15,27 @@
 
 
 
-@interface MessageInputView ()<UITextViewDelegate>
 
-@property (nonatomic, weak, readwrite) MessageTextView *inputTextView;
+#import "MorePanel.h"
 
-@property (nonatomic, weak, readwrite) UIButton *voiceChangeButton;
 
-@property (nonatomic, weak, readwrite) UIButton *multiMediaSendButton;
 
-@property (nonatomic, weak, readwrite) UIButton *faceSendButton;
 
-@property (nonatomic, weak, readwrite) UIButton *holdDownButton;
+#import "ShareMenuView.h"
+#import "EmoticonManagerView.h"
+
+
+#define TextViewH 36
+
+
+@interface MessageInputView ()<ChatToolBarDelegate, MorePanelDelegate, EmoticonManagerViewDelegate>
+
+@property (nonatomic, strong) ChatToolBar *chatToolBar;
+
+
+@property (nonatomic, strong) MorePanel *morePanel;
+//@property (nonatomic, strong) ShareMenuView *shareMenuView;
+@property (nonatomic, strong) EmoticonManagerView *emoticonManagerView;
 
 
 /**
@@ -44,73 +54,17 @@
 @property (nonatomic, copy) NSString *inputedText;
 
 /**
- *  输入框内的所有按钮，点击事件所触发的方法
- *
- *  @param sender 被点击的按钮对象
+ *  记录旧的textView contentSize Heigth
  */
-- (void)messageStyleButtonClicked:(UIButton *)sender;
+@property (nonatomic, assign) CGFloat previousTextViewContentHeight;
 
-/**
- *  当录音按钮被按下所触发的事件，这时候是开始录音
- */
-- (void)holdDownButtonTouchDown;
 
-/**
- *  当手指在录音按钮范围之外离开屏幕所触发的事件，这时候是取消录音
- */
-- (void)holdDownButtonTouchUpOutside;
-
-/**
- *  当手指在录音按钮范围之内离开屏幕所触发的事件，这时候是完成录音
- */
-- (void)holdDownButtonTouchUpInside;
-
-/**
- *  当手指滑动到录音按钮的范围之外所触发的事件
- */
-- (void)holdDownDragOutside;
-
-/**
- *  当手指滑动到录音按钮的范围之内所触发的时间
- */
-- (void)holdDownDragInside;
-
-#pragma mark - layout subViews UI
-/**
- *  根据正常显示和高亮状态创建一个按钮对象
- *
- *  @param image   正常显示图
- *  @param hlImage 高亮显示图
- *
- *  @return 返回按钮对象
- */
-- (UIButton *)createButtonWithImage:(UIImage *)image HLImage:(UIImage *)hlImage ;
-
-/**
- *  根据输入框的样式类型配置输入框的样式和UI布局
- *
- *  @param style 输入框样式类型
- */
-- (void)setupMessageInputViewBarWithStyle:(MessageInputViewStyle)style;
-
-/**
- *  配置默认参数
- */
-- (void)setup ;
-
-#pragma mark - Message input view
-/**
- *  动态改变textView的高度
- *
- *  @param changeInHeight 动态的高度
- */
-- (void)adjustTextViewHeightBy:(CGFloat)changeInHeight;
 
 @end
 
 @implementation MessageInputView
 
-
+/*
 + (instancetype)keyBoard {
     return [self keyBoardWithNavgationBarTranslucent:YES];
 }
@@ -130,25 +84,21 @@
     CGRect frame = CGRectMake(0, bounds.size.height - kChatToolBarHeight, kScreenWidth, kChatKeyBoardHeight);
     return [[self alloc] initWithFrame:frame];
 }
+ */
 
 #pragma mark - life cycle
 - (void)dealloc {
-    _inputedText = nil;
-    _inputTextView.delegate = nil;
-    _inputTextView = nil;
-    
-    _voiceChangeButton = nil;
-    _multiMediaSendButton = nil;
-    _faceSendButton = nil;
-    _holdDownButton = nil;
+    // remove KVO
+    [self removeObserver:self forKeyPath:@"self.chatToolBar.frame"];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self setBackgroundColor:[UIColor redColor]];
+        self.backgroundColor = [UIColor colorWithRed:247.0/255.0 green:247.0/255.0 blue:247.0/255.0 alpha:1.0];
         [self setup];
+        [self initSubviews];
     }
     return self;
 }
@@ -165,281 +115,202 @@
     _allowsSendFace = YES;
     _allowsSendMultiMedia = YES;
     
-    _messageInputViewStyle = MessageInputViewStyleFlat;
+    _inputViewState = InputViewStateNormal;
+    
+    _previousTextViewContentHeight = TextViewH;
+    
+    
 }
-- (void)willMoveToSuperview:(UIView *)newSuperview {
-    // 当别的地方需要add的时候，就会调用这里
-    if (newSuperview) {
-        [self setupMessageInputViewBarWithStyle:self.messageInputViewStyle];
+
+- (void)initSubviews {
+    
+    _chatToolBar = [[ChatToolBar alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kChatToolBarHeight)];
+    _chatToolBar.delegate = self;
+    [self addSubview:_chatToolBar];
+    
+    [_chatToolBar setTextViewPlaceHolder:@"发送信息"];
+//    [_chatToolBar setTextViewPlaceHolderColor:[UIColor redColor]];
+    
+    
+    [_chatToolBar.voiceBtn addTarget:self action:@selector(onTouchVoiceBtn:) forControlEvents:UIControlEventTouchUpInside];
+    [_chatToolBar.emoticonBtn addTarget:self action:@selector(onTouchEmoticonBtn:) forControlEvents:UIControlEventTouchUpInside];
+    [_chatToolBar.moreBtn addTarget:self action:@selector(onTouchMoreBtn:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [_chatToolBar.recordBtn addTarget:self action:@selector(holdDownButtonTouchDown) forControlEvents:UIControlEventTouchDown];
+    [_chatToolBar.recordBtn addTarget:self action:@selector(holdDownButtonTouchUpOutside) forControlEvents:UIControlEventTouchUpOutside];
+    [_chatToolBar.recordBtn addTarget:self action:@selector(holdDownButtonTouchUpInside) forControlEvents:UIControlEventTouchUpInside];
+    [_chatToolBar.recordBtn addTarget:self action:@selector(holdDownDragOutside) forControlEvents:UIControlEventTouchDragExit];
+    [_chatToolBar.recordBtn addTarget:self action:@selector(holdDownDragInside) forControlEvents:UIControlEventTouchDragEnter];
+    
+    
+    
+    
+    
+    
+    _emoticonManagerView = [[EmoticonManagerView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.chatToolBar.frame), CGRectGetWidth(self.chatToolBar.frame), kbottomCotainerHeight)];
+    _emoticonManagerView.delegate = self;
+    [self addSubview:_emoticonManagerView];
+    
+    
+    
+    
+    
+    
+    
+    NSArray *dataArr = @[
+                 @{@"name":@"照片", @"imgNor":@"sharemore_pic", @"imgHig":@""},
+                 @{@"name":@"拍摄", @"imgNor":@"sharemore_video", @"imgHig":@""},
+                 @{@"name":@"位置", @"imgNor":@"sharemore_location", @"imgHig":@""},
+                 @{@"name":@"小视频", @"imgNor":@"sharemore_sight", @"imgHig":@""},
+                 @{@"name":@"转账", @"imgNor":@"sharemore_pay", @"imgHig":@""},
+                 @{@"name":@"个人名片", @"imgNor":@"sharemore_friendcard", @"imgHig":@""},
+                 @{@"name":@"语音输入", @"imgNor":@"sharemore_voiceinput", @"imgHig":@""},
+                 @{@"name":@"语音", @"imgNor":@"sharemore_wxtalk", @"imgHig":@""},
+                 @{@"name":@"收藏", @"imgNor":@"sharemore_myfav", @"imgHig":@""},
+                 @{@"name":@"卡券", @"imgNor":@"sharemore_wallet", @"imgHig":@""}
+                 ];
+    NSMutableArray *shareMenuItems = [NSMutableArray array];
+    for (NSDictionary *dic in dataArr) {
+        MoreItemModel *shareMenuItem = [[MoreItemModel alloc] initWithNormalIconImage:[UIImage imageNamed:dic[@"imgNor"]] title:dic[@"name"]];
+        [shareMenuItems addObject:shareMenuItem];
     }
+    
+    _morePanel = [[MorePanel alloc] init];
+    _morePanel.delegate = self;
+    _morePanel.frame = _emoticonManagerView.frame;
+    [self addSubview:_morePanel];
+    
+    _morePanel.shareMenuItems = shareMenuItems;
+
+    
+
+    [self addObserver:self forKeyPath:@"self.chatToolBar.frame" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
 }
-- (void)setupMessageInputViewBarWithStyle:(MessageInputViewStyle)style {
-    //配置输入工具条的样式和布局
-    //需要显示按钮的总宽度，包括间隔在内
-    CGFloat allButtonWidth = 0.0f;
-    //水平间隔
-    CGFloat horizontalPadding = 8;
+
+#pragma mark - setter
+- (void)setInputViewState:(InputViewState)inputViewState {
     
-    //竖直间隔
-    CGFloat verticalPadding = (kChatToolBarHeight - [MessageInputView textViewLineHeight]) /2.0f;
-    
-    //输入框
-    CGFloat textViewLeftMargin = (style == MessageInputViewStyleFlat) ? 6.0 : 4.0;
-    
-    //每个按钮统一使用的frame变量
-    CGRect buttonFrame;
-    //按钮对象消息
-    UIButton *button;
-    
-    //允许发送语音
-    if (self.allowsSendVoice) {
-        NSString *voiceNormalImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewVoiceNormalImageNameKey];
-        if (!voiceNormalImageName) {
-            voiceNormalImageName = @"voice";
-        }
-        NSString *voiceHLImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewVoiceHLImageNameKey];
-        if (!voiceHLImageName) {
-            voiceHLImageName = @"voice_HL";
-        }
-        NSString *keyboardNormalImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewKeyboardNormalImageNameKey];
-        if (!keyboardNormalImageName) {
-            keyboardNormalImageName = @"keyboard";
-        }
-        NSString *keyboardHLImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewKeyboardHLImageNameKey];
-        if (!keyboardHLImageName) {
-            keyboardHLImageName = @"keyboard_HL";
-        }
-        
-        button = [self createButtonWithImage:[UIImage imageNamed:voiceNormalImageName] HLImage:[UIImage imageNamed:voiceHLImageName]];
-        [button addTarget:self action:@selector(messageStyleButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-        button.tag = 0;
-        [button setBackgroundImage:[UIImage imageNamed:keyboardNormalImageName] forState:UIControlStateSelected];
-        buttonFrame = button.frame;
-        buttonFrame.origin = CGPointMake(horizontalPadding, verticalPadding);
-        button.frame = buttonFrame;
-        [self addSubview:button];
-        
-        allButtonWidth += CGRectGetMaxX(buttonFrame);
-        textViewLeftMargin += CGRectGetMaxX(buttonFrame);
-        
-        self.voiceChangeButton = button;
-    }
-    //允许发送多媒体消息，为什么不先放表情按钮呢，因为表情按钮要根据 +号 按钮布局
-    if (self.allowsSendMultiMedia) {
-        NSString *extensionNormalImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewExtensionNormalImageNameKey];
-        if (!extensionNormalImageName) {
-            extensionNormalImageName = @"multiMedia";
-        }
-        NSString *extensionHLImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewExtensionHLImageNameKey];
-        if (!extensionHLImageName) {
-            extensionHLImageName = @"multiMedia_HL";
-        }
-        
-        button = [self createButtonWithImage:[UIImage imageNamed:extensionNormalImageName] HLImage:[UIImage imageNamed:extensionHLImageName]];
-        button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-        [button addTarget:self action:@selector(messageStyleButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-        button.tag = 2;
-        buttonFrame = button.frame;
-        buttonFrame.origin = CGPointMake(CGRectGetWidth(self.bounds) - horizontalPadding - CGRectGetWidth(buttonFrame), verticalPadding);
-        button.frame = buttonFrame;
-        [self addSubview:button];
-        allButtonWidth += CGRectGetWidth(buttonFrame) + horizontalPadding * 2.5;
-        
-        self.multiMediaSendButton = button;
- 
-    }
-    //允许发送表情
-    if (self.allowsSendFace) {
-        NSString *emotionNormalImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewEmotionNormalImageNameKey];
-        if (!emotionNormalImageName) {
-            emotionNormalImageName = @"face";
-        }
-        NSString *emotionHLImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewEmotionHLImageNameKey];
-        if (!emotionHLImageName) {
-            emotionHLImageName = @"face_HL";
-        }
-        
-        NSString *keyboardNormalImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewKeyboardNormalImageNameKey];
-        if (!keyboardNormalImageName) {
-            keyboardNormalImageName = @"keyboard";
-        }
-        NSString *keyboardHLImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewKeyboardHLImageNameKey];
-        if (!keyboardHLImageName) {
-            keyboardHLImageName = @"keyboard_HL";
-        }
-        
-        button = [self createButtonWithImage:[UIImage imageNamed:emotionNormalImageName] HLImage:[UIImage imageNamed:emotionHLImageName]];
-        button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-        [button setBackgroundImage:[UIImage imageNamed:keyboardNormalImageName] forState:UIControlStateSelected];
-        [button addTarget:self action:@selector(messageStyleButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-        button.tag = 1;
-        buttonFrame = button.frame;
-        if (self.allowsSendMultiMedia) {
-            buttonFrame.origin = CGPointMake(CGRectGetMinX(self.multiMediaSendButton.frame) - CGRectGetWidth(buttonFrame) - horizontalPadding, verticalPadding);
-            allButtonWidth += CGRectGetWidth(buttonFrame) + horizontalPadding * 1.5;
-        } else {
-            buttonFrame.origin = CGPointMake(CGRectGetWidth(self.bounds) - horizontalPadding - CGRectGetWidth(buttonFrame), verticalPadding);
-            allButtonWidth += CGRectGetWidth(buttonFrame) + horizontalPadding * 2.5;
-        }
-        button.frame = buttonFrame;
-        [self addSubview:button];
-        
-        self.faceSendButton = button;
-    }
-    
-    //输入框的高度和宽度
-    CGFloat width = CGRectGetWidth(self.bounds) - (allButtonWidth ? allButtonWidth : (textViewLeftMargin * 2));
-    CGFloat height = [MessageInputView textViewLineHeight];
-    //初始化输入框
-    MessageTextView *textView = [[MessageTextView alloc] initWithFrame:CGRectZero];
-    //这个是放微信的一个细节体现
-    textView.returnKeyType = UIReturnKeySend;
-    textView.enablesReturnKeyAutomatically = YES;//UITextView内部判断send按钮是否可以用
-    UIColor *placeHolderTextColor = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewPlaceHolderTextColorKey];
-    if (placeHolderTextColor) {
-        textView.placeHolderTextColor = placeHolderTextColor;
-    }
-    NSString *placeHolder = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewPlaceHolderKey];
-    if (!placeHolder) {
-        placeHolder = NSLocalizedStringFromTable(@"SendAMessage", @"MessageDisplayKitString", nil);
-    }
-    UIColor *textColor = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewTextColorKey];
-    if (textColor) {
-        textView.textColor = textColor;
-    }
-    textView.placeHolder = placeHolder;
-    textView.delegate = self;
-    
-    [self addSubview:textView];
-    _inputTextView = textView;
-    
-    //配置不同iOS SDK版本的样式
-    switch (style) {
-        case MessageInputViewStyleFlat: {
-            UIColor *inputBackgroundColor = [ConfigurationHelper appearance].messageInputViewStyle[kXHMessageInputViewBackgroundColorKey];
-            NSString *inputViewBackgroundImageName = nil;
-            if (!inputBackgroundColor) {
-                inputViewBackgroundImageName = [ConfigurationHelper appearance].messageInputViewStyle[kXHMessageInputViewBackgroundImageNameKey];
-                if (!inputViewBackgroundImageName) {
-                    inputViewBackgroundImageName = @"input-bar-flat";
-                }
-            }
-            UIColor *borderColor = [ConfigurationHelper appearance].messageInputViewStyle[kXHMessageInputViewBorderColorKey];
-            if (!borderColor) {
-                borderColor = [UIColor colorWithWhite:0.8f alpha:1.0f];
-            }
-            CGFloat borderWidth = [[[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewBorderWidthKey] floatValue];
-            if (borderWidth == 0) {
-                borderWidth = 0.65f;
-            }
-            CGFloat cornerRadius = [[[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewCornerRadiusKey] floatValue];
-            if (cornerRadius == 0) {
-                cornerRadius = 6.0f;
-            }
-            _inputTextView.frame = CGRectMake(textViewLeftMargin, (kChatToolBarHeight-height)/2.0, width, height);
-            _inputTextView.backgroundColor = [UIColor clearColor];
-            _inputTextView.layer.borderColor = borderColor.CGColor;
-            _inputTextView.layer.borderWidth = borderWidth;
-            _inputTextView.layer.cornerRadius = cornerRadius;
+    _inputViewState = inputViewState;
+    self.chatToolBar.state = inputViewState;
+    switch (inputViewState) {
+        case InputViewStateText:
+        case InputViewStateVoice:
+        case InputViewStateNormal: {
             
-            if (inputBackgroundColor) {
-                self.backgroundColor = inputBackgroundColor;
-            } else {
-                self.image = [[UIImage imageNamed:inputViewBackgroundImageName] resizableImageWithCapInsets:UIEdgeInsetsMake(2.0f, 0.0f, 0.0f, 0.0f)  resizingMode:UIImageResizingModeTile];
-            }
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.35 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                self.morePanel.hidden = self.emoticonManagerView.hidden = YES;
+            });
         }
             break;
+        case InputViewStateEmotion: {
             
-        default:
+            [self bringSubviewToFront:self.emoticonManagerView];
+            self.morePanel.hidden = YES;
+            self.emoticonManagerView.hidden = NO;
+        }
+            break;
+        case InputViewStateShareMenu: {
+            
+            [self bringSubviewToFront:self.morePanel];
+            self.morePanel.hidden = NO;
+            self.emoticonManagerView.hidden = YES;
+        }
             break;
     }
-    // 如果是可以发送语音的，那就需要一个按钮录音的按钮，事件可以在外部添加
-    if (self.allowsSendVoice) {
-        NSString *voiceHolderImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewVoiceHolderImageNameKey];
-        if (!voiceHolderImageName) {
-            voiceHolderImageName = @"VoiceBtn_Black";
-        }
-        NSString *voiceHolderHLImageName = [[ConfigurationHelper appearance].messageInputViewStyle objectForKey:kXHMessageInputViewVoiceHolderHLImageNameKey];
-        if (!voiceHolderHLImageName) {
-            voiceHolderHLImageName = @"VoiceBtn_BlackHL";
-        }
-        UIEdgeInsets edgeInsets = UIEdgeInsetsMake(9, 9, 9, 9);
-        button = [self createButtonWithImage:XL_STRETCH_IMAGE([UIImage imageNamed:voiceHolderImageName], edgeInsets) HLImage:XL_STRETCH_IMAGE([UIImage imageNamed:voiceHolderHLImageName], edgeInsets)];
-        [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-        [button setTitle:NSLocalizedStringFromTable(@"HoldToTalk", @"MessageDisplayKitString", nil) forState:UIControlStateNormal];
-        [button setTitle:NSLocalizedStringFromTable(@"ReleaseToSend", @"MessageDisplayKitString", nil)  forState:UIControlStateHighlighted];
-        buttonFrame = CGRectMake(textViewLeftMargin-5, 0, width+10, self.frame.size.height);
-        button.frame = buttonFrame;
-        button.alpha = self.voiceChangeButton.selected;
-        [button addTarget:self action:@selector(holdDownButtonTouchDown) forControlEvents:UIControlEventTouchDown];
-        [button addTarget:self action:@selector(holdDownButtonTouchUpOutside) forControlEvents:UIControlEventTouchUpOutside];
-        [button addTarget:self action:@selector(holdDownButtonTouchUpInside) forControlEvents:UIControlEventTouchUpInside];
-        [button addTarget:self action:@selector(holdDownDragOutside) forControlEvents:UIControlEventTouchDragExit];
-        [button addTarget:self action:@selector(holdDownDragInside) forControlEvents:UIControlEventTouchDragEnter];
-        [self addSubview:button];
-        self.holdDownButton = button;
-    }    
 }
 
 
-#pragma mark - ButtonAction
-- (void)messageStyleButtonClicked:(UIButton *)sender {
-    NSInteger index = sender.tag;
-    switch (index) {
-        case 0: {
-            sender.selected = !sender.selected;
-            if (sender.selected) {
-                self.inputedText = self.inputTextView.text;
-                self.inputTextView.text = @"";
-                [self.inputTextView resignFirstResponder];
-            } else {
-                self.inputTextView.text = self.inputedText;
-                self.inputedText = nil;
-                [self.inputTextView becomeFirstResponder];
-            }
-            [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                self.holdDownButton.alpha = sender.selected;
-                self.inputTextView.alpha = !sender.selected;
-            } completion:nil];
-            if ([self.delegate respondsToSelector:@selector(didChangeSendVoiceAction:)]) {
-                [self.delegate didChangeSendVoiceAction:sender.selected];
-            }
-        }
-            break;
-        case 1: {
-            sender.selected = !sender.selected;
-            self.voiceChangeButton.selected = !sender.selected;
-            if (!sender.selected) {
-                [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                    self.holdDownButton.alpha = sender.selected;
-                    self.inputTextView.alpha = !sender.selected;
-                } completion:nil];
-            } else {
-                [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                    self.holdDownButton.alpha = !sender.selected;
-                    self.inputTextView.alpha = sender.selected;
-                } completion:^(BOOL finished) {
-                    
-                }];
-            }
-            if ([self.delegate respondsToSelector:@selector(didSendFaceAction:)]) {
-                [self.delegate didSendFaceAction:sender.selected];
-            }
-        }
-            break;
-        case 2: {
-            self.faceSendButton.selected = NO;
-            self.voiceChangeButton.selected = NO;
-            
-            if ([self.delegate respondsToSelector:@selector(didSelectedMultipleMediaAction)]) {
-                [self.delegate didSelectedMultipleMediaAction];
-            }
-        }
-            break;
-        default:
-            break;
+#pragma mark - ChatToolBar - Actions
+- (void)onTouchVoiceBtn:(id)sender {
+    // image change
+    
+    
+    if (self.inputViewState != InputViewStateVoice) {
+//        __weak typeof(self) weakSelf = self;
+//        if ([[AVAudioSession sharedInstance] respondsToSelector:@selector(requestRecordPermission:)]) {
+//            [[AVAudioSession sharedInstance] performSelector:@selector(requestRecordPermission:) withObject:^(BOOL granted) {
+//                if (granted) {
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        if (self.chatToolBar.showsKeyboard) {
+                            self.inputViewState = InputViewStateVoice;
+                            self.chatToolBar.showsKeyboard = NO;
+        
+//                        }else{
+//                            [self refreshStatus:NIMInputStatusAudio];
+//                            [self callDidChangeHeight];
+//                        }
+//                    });
+//                }
+//                else {
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        [[[UIAlertView alloc] initWithTitle:nil
+//                                                    message:@"没有麦克风权限"
+//                                                   delegate:nil
+//                                          cancelButtonTitle:@"确定"
+//                                          otherButtonTitles:nil] show];
+//                    });
+//                }
+//            }];
+//        }
+    } else {
+        
+        self.inputViewState = InputViewStateText;
+        self.chatToolBar.showsKeyboard = YES;
+        
+    }
+    
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didChangeSendVoiceAction:)]) {
+        [self.delegate didChangeSendVoiceAction:!self.chatToolBar.showsKeyboard];
     }
 }
+
+- (void)onTouchEmoticonBtn:(id)sender {
+    
+    if (self.inputViewState != InputViewStateEmotion) {
+    
+//        if (self.chatToolBar.showsKeyboard) {
+            self.inputViewState = InputViewStateEmotion;
+            self.chatToolBar.showsKeyboard = NO;
+//        } else {
+//            [self refreshStatus:NIMInputStatusEmoticon];
+//            [self callDidChangeHeight];
+//        }
+        
+    } else {
+        self.inputViewState = InputViewStateText;
+        self.chatToolBar.showsKeyboard = YES;
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didSelectedFaceAction:)]) {
+        [self.delegate didSelectedFaceAction:!self.chatToolBar.showsKeyboard];
+    }
+}
+- (void)onTouchMoreBtn:(id)sender {
+    if (self.inputViewState != InputViewStateShareMenu) {
+        
+//        if (self.chatToolBar.showsKeyboard) {
+            self.inputViewState = InputViewStateShareMenu;
+            self.chatToolBar.showsKeyboard = NO;
+//        } else {
+//            [self refreshStatus:NIMInputStatusMore];
+//            [self callDidChangeHeight];
+//        }
+    }
+    else
+    {
+        self.inputViewState = InputViewStateText;
+        self.chatToolBar.showsKeyboard = YES;
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(didSelectedMultipleMediaAction:)]) {
+        [self.delegate didSelectedMultipleMediaAction:!self.chatToolBar.showsKeyboard];
+    }
+}
+
+
+/**
+ *  当录音按钮被按下所触发的事件，这时候是开始录音
+ */
 - (void)holdDownButtonTouchDown {
     self.isCancelled = NO;
     self.isRecording = NO;
@@ -459,7 +330,9 @@
         }];
     }
 }
-
+/**
+ *  当手指在录音按钮范围之外离开屏幕所触发的事件，这时候是取消录音
+ */
 - (void)holdDownButtonTouchUpOutside {
     //如果已經開始錄音了, 才需要做取消的動作, 否則只要切換 isCancelled, 不讓錄音開始.
     if (self.isRecording) {
@@ -471,6 +344,9 @@
     }
 }
 
+/**
+ *  当手指在录音按钮范围之内离开屏幕所触发的事件，这时候是完成录音
+ */
 - (void)holdDownButtonTouchUpInside {
     //如果已經開始錄音了, 才需要做結束的動作, 否則只要切換 isCancelled, 不讓錄音開始.
     if (self.isRecording) {
@@ -481,7 +357,9 @@
         self.isCancelled = YES;
     }
 }
-
+/**
+ *  当手指滑动到录音按钮的范围之外所触发的事件
+ */
 - (void)holdDownDragOutside {
     //如果已經開始錄音了, 才需要做拖曳出去的動作, 否則只要切換 isCancelled, 不讓錄音開始.
     if (self.isRecording) {
@@ -492,7 +370,9 @@
         self.isCancelled = YES;
     }
 }
-
+/**
+ *  当手指滑动到录音按钮的范围之内所触发的时间
+ */
 - (void)holdDownDragInside {
     //如果已經開始錄音了, 才需要做拖曳回來的動作, 否則只要切換 isCancelled, 不讓錄音開始.
     if (self.isRecording) {
@@ -503,78 +383,155 @@
         self.isCancelled = YES;
     }
 }
-
-- (void)adjustTextViewHeightBy:(CGFloat)changeInHeight {
-    // 动态改变自身的高度和输入框的高度
-    CGRect prevFrame = self.inputTextView.frame;
-    NSUInteger numLines = MAX([self.inputTextView numberOfLinesOfText], [self.inputTextView.text numberOfLines]);
+#pragma mark - MorePanelDelegate
+- (void)didSelecteShareMenuItem:(MoreItemModel *)moreItem atIndex:(NSInteger)index {
     
-    self.inputTextView.frame = CGRectMake(prevFrame.origin.x, prevFrame.origin.y, prevFrame.size.width, prevFrame.size.height + changeInHeight);
-    
-    self.inputTextView.contentInset = UIEdgeInsetsMake(numLines >= 6 ? 4.0f : 0.0f, 0.0f, (numLines >= 6 ? 4.0f : 0.0f), 0.0f);
-    // from iOS 7, the content size will be accurate only if the scrolling is enabled.
-    self.inputTextView.scrollEnabled = YES;
-    if (numLines >= 6) {
-        CGPoint buttomOffset = CGPointMake(0.0f, self.inputTextView.contentSize.height - self.inputTextView.bounds.size.height);
-        [self.inputTextView setContentOffset:buttomOffset animated:YES];
-        [self.inputTextView scrollRangeToVisible:NSMakeRange(self.inputTextView.text.length-2, 1)];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(messageInputView:didSelecteShareMenuItem:atIndex:)]) {
+        [self.delegate messageInputView:self didSelecteShareMenuItem:moreItem atIndex:index];
     }
-}
-+ (CGFloat)textViewLineHeight {
-    return 36.0f; //for fontSize 16.0f
+    
 }
 
-+ (CGFloat)maxLines {
-    return [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone ? 3.0f : 8.0f;
-}
-+ (CGFloat)maxHeight {
-    return ([MessageInputView maxLines] + 1.0f) * [MessageInputView textViewLineHeight];
-}
+#pragma mark - ChatToolBarDelegate
 
-#pragma mark - TextViewdelegate
-- (BOOL)textViewShouldBeginEditing:(UITextView *)textView {
+- (void)chatToolBarTextViewWillBeginEditing:(UITextView *)textView {
     if ([self.delegate respondsToSelector:@selector(inputTextViewWillBeginEditing:)]) {
-        [self.delegate inputTextViewWillBeginEditing:self.inputTextView];
+        [self.delegate inputTextViewWillBeginEditing:textView];
     }
-    self.faceSendButton.selected = NO;
-    self.voiceChangeButton.selected = NO;
-    return YES;
 }
-
-- (void)textViewDidBeginEditing:(UITextView *)textView {
-    [textView becomeFirstResponder];
+- (void)chatToolBarTextViewDidBeginEditing:(UITextView *)textView {
     if ([self.delegate respondsToSelector:@selector(inputTextViewDidBeginEditing:)]) {
-        [self.delegate inputTextViewDidBeginEditing:self.inputTextView];
+        [self.delegate inputTextViewDidBeginEditing:textView];
     }
 }
-- (void)textViewDidEndEditing:(UITextView *)textView {
-    [textView resignFirstResponder];
+- (void)chatToolBarTextViewDidChange:(UITextView *)textView {
+    if ([self.delegate respondsToSelector:@selector(inputTextViewDidChange:)]) {
+        [self.delegate inputTextViewDidChange:textView];
+    }
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    if ([text isEqualToString:@"\n"]) {
-        if ([self.delegate respondsToSelector:@selector(didSendTextAction:)]) {
-            [self.delegate didSendTextAction:textView.text];
+- (void)chatToolBarSendText:(NSString *)text {
+    
+    if ([self.delegate respondsToSelector:@selector(didSendTextAction:)]) {
+        [self.delegate didSendTextAction:text];
+    }
+    [self.chatToolBar clearTextViewContent];
+}
+#pragma mark - EmoticonManagerViewDelegate
+
+- (void)didPressSend:(id)sender {
+    
+    NSString *text = self.chatToolBar.contentText;
+    if (text.length <= 0) {
+        NSLog(@"内容是空的，发送无效");
+        return;
+    }
+    [self.chatToolBar clearTextViewContent];
+    
+    if ([self.delegate respondsToSelector:@selector(messageInputView:didPressSend:)]) {
+        [self.delegate messageInputView:self didPressSend:text];
+    }
+    
+}
+- (void)selectedEmoticon:(NSString *)emoticonID catalog:(NSString *)emotCatalogID description:(NSString *)description {
+    
+    if (!emotCatalogID) { //删除键
+        [self onTextDelete];
+    }else{
+        if ([emotCatalogID isEqualToString:NIMKit_EmojiCatalog]) {
+            [self.chatToolBar insertText:description];
+        }else{
+            //发送贴图消息
+//            if ([self.actionDelegate respondsToSelector:@selector(onSelectChartlet:catalog:)]) {
+//                [self.actionDelegate onSelectChartlet:emoticonID catalog:emotCatalogID];
+//            }
+            if ([self.delegate respondsToSelector:@selector(messageInputView:didSelectChartlet:catalog:)]) {
+                [self.delegate messageInputView:self didSelectChartlet:emoticonID catalog:emotCatalogID];
+            }
         }
-        return NO;
+        
+        
     }
-    return YES;
+}
+- (BOOL)onTextDelete {
+    
+    
+    NSRange range = [self delRangeForEmoticon];
+    
+//    关于 @ 删除
+//    if (range.length == 1) {
+////        删的不是表情，可能是@
+////        InputAtItem *item = [self delRangeForAt];
+////        if (item) {
+////            range = item.range;
+////        }
+//    }
+//    if (range.length == 1) {
+//        //自动删除
+//        return YES;
+//    }
+    
+    [self.chatToolBar deleteText:range];
+    return NO;
 }
 
 
-- (UIButton *)createButtonWithImage:(UIImage *)image HLImage:(UIImage *)hlImage {
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, [MessageInputView textViewLineHeight], [MessageInputView textViewLineHeight])];
-    if (image)
-        [button setBackgroundImage:image forState:UIControlStateNormal];
-    if (hlImage)
-        [button setBackgroundImage:hlImage forState:UIControlStateHighlighted];
-    return button;
+- (NSRange)delRangeForEmoticon {
+    
+    NSString *text = self.chatToolBar.contentText;
+    NSRange range = [self rangeForPrefix:@"[" suffix:@"]"];
+    NSRange selectedRange = [self.chatToolBar selectedRange];
+    
+    
+    if (range.length > 1) {
+        NSString *name = [text substringWithRange:range];
+        InputEmoticon *icon = [[EmoticonManager sharedManager] emoticonByTag:name];
+        range = icon? range : NSMakeRange(selectedRange.location - 1, 1);
+    }
+    return range;
+}
+- (NSRange)rangeForPrefix:(NSString *)prefix suffix:(NSString *)suffix {
+    NSString *text = self.chatToolBar.contentText;
+    NSRange range = [self.chatToolBar selectedRange];
+    NSString *selectedText = range.length ? [text substringWithRange:range] : text;
+    NSInteger endLocation = range.location;
+    if (endLocation <= 0) {
+        return NSMakeRange(NSNotFound, 0);
+    }
+    NSInteger index = -1;
+    if ([selectedText hasSuffix:suffix]) {
+        //往前搜最多20个字符，一般来讲是够了...
+        NSInteger p = 20;
+        for (NSInteger i = endLocation; i >= endLocation - p && i-1 >= 0 ; i--) {
+            NSRange subRange = NSMakeRange(i - 1, 1);
+            NSString *subString = [text substringWithRange:subRange];
+            if ([subString compare:prefix] == NSOrderedSame) {
+                index = i - 1;
+                break;
+            }
+        }
+    }
+    return index == -1 ? NSMakeRange(endLocation - 1, 1) : NSMakeRange(index, endLocation - index);
 }
 
-
-
-
-
-
+#pragma mark - Key-value Observing
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                       context:(void *)context {
+    
+    if (object == self && [keyPath isEqualToString:@"self.chatToolBar.frame"]) {
+        
+        CGRect newRect = [[change objectForKey:NSKeyValueChangeNewKey] CGRectValue];
+        CGRect oldRect = [[change objectForKey:NSKeyValueChangeOldKey] CGRectValue];
+        CGFloat changeHeight = newRect.size.height - oldRect.size.height;
+        
+        self.frame = CGRectMake(0, self.frame.origin.y - changeHeight, self.frame.size.width, self.frame.size.height + changeHeight);
+        
+        self.emoticonManagerView.frame = CGRectMake(0, CGRectGetMaxY(self.chatToolBar.frame), CGRectGetWidth(self.chatToolBar.frame), self.frame.size.height - CGRectGetMaxY(self.chatToolBar.frame));
+        self.morePanel.frame = self.emoticonManagerView.frame;
+        
+    }
+}
 
 @end

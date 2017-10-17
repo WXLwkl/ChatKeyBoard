@@ -7,10 +7,12 @@
 //
 
 #import "WeChatMessageTableViewController.h"
-#import "MessageVideoConverPhotoFactory.h"
-#import "DisplayTextViewController.h"
 
 #import "AudioPlayerHelper.h"
+
+#import "MessageVideoConverPhotoFactory.h"
+#import "DisplayTextViewController.h"
+#import "DisplayMediaViewController.h"
 #import "DisplayLocationViewController.h"
 
 @interface WeChatMessageTableViewController ()
@@ -25,7 +27,7 @@
 
 - (Message *)getTextMessageWithBubbleMessageType:(BubbleMessageType)bubbleMessageType {
     Message *textMessage = [[Message alloc] initWithText:@"这是华捷微信，希望大家喜欢这个开源库，请大家帮帮忙支持这个开源库吧！我是Jack，叫华仔也行，曾宪华就是我啦！" sender:@"华仔" timestamp:[NSDate distantPast]];
-    textMessage.avatar = [UIImage imageNamed:@"avatar"];
+    textMessage.avatar = [UIImage imageNamed:@"User"];
     textMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/meIcon@2x.png";
     textMessage.bubbleMessageType = bubbleMessageType;
     
@@ -34,7 +36,7 @@
 
 - (Message *)getPhotoMessageWithBubbleMessageType:(BubbleMessageType)bubbleMessageType {
     Message *photoMessage = [[Message alloc] initWithPhoto:nil thumbnailUrl:@"http://d.hiphotos.baidu.com/image/pic/item/30adcbef76094b361721961da1cc7cd98c109d8b.jpg" originPhotoUrl:nil sender:@"Jack" timestamp:[NSDate date]];
-    photoMessage.avatar = [UIImage imageNamed:@"avatar"];
+    photoMessage.avatar = [UIImage imageNamed:@"User"];
     photoMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/JieIcon@2x.png";
     photoMessage.bubbleMessageType = bubbleMessageType;
     
@@ -42,9 +44,9 @@
 }
 
 - (Message *)getVideoMessageWithBubbleMessageType:(BubbleMessageType)bubbleMessageType {
-    NSString *videoPath = [[NSBundle mainBundle] pathForResource:@"IMG_1555.MOV" ofType:@""];
+    NSString *videoPath = [[NSBundle mainBundle] pathForResource:@"02.mov" ofType:@""];
     Message *videoMessage = [[Message alloc] initWithVideoConverPhoto:[MessageVideoConverPhotoFactory videoConverPhotoWithVideoPath:videoPath] videoPath:videoPath videoUrl:nil sender:@"Jayson" timestamp:[NSDate date]];
-    videoMessage.avatar = [UIImage imageNamed:@"avatar"];
+    videoMessage.avatar = [UIImage imageNamed:@"User"];
     videoMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/JieIcon@2x.png";
     videoMessage.bubbleMessageType = bubbleMessageType;
     
@@ -52,7 +54,7 @@
 }
 - (Message *)getVoiceMessageWithBubbleMessageType:(BubbleMessageType)bubbleMessageType {
     Message *voiceMessage = [[Message alloc] initWithVoicePath:nil voiceUrl:nil voiceDuration:@"1" sender:@"Jayson" timestamp:[NSDate date] isRead:NO];
-    voiceMessage.avatar = [UIImage imageNamed:@"avatar"];
+    voiceMessage.avatar = [UIImage imageNamed:@"User"];
     voiceMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/JieIcon@2x.png";
     voiceMessage.bubbleMessageType = bubbleMessageType;
     
@@ -61,7 +63,7 @@
 
 - (Message *)getEmotionMessageWithBubbleMessageType:(BubbleMessageType)bubbleMessageType {
     Message *emotionMessage = [[Message alloc] initWithEmotionPath:[[NSBundle mainBundle] pathForResource:@"emotion1.gif" ofType:nil] sender:@"Jayson" timestamp:[NSDate date]];
-    emotionMessage.avatar = [UIImage imageNamed:@"avatar"];
+    emotionMessage.avatar = [UIImage imageNamed:@"User"];
     emotionMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/JieIcon@2x.png";
     emotionMessage.bubbleMessageType = bubbleMessageType;
     
@@ -70,7 +72,7 @@
 
 - (Message *)getGeolocationsMessageWithBubbleMessageType:(BubbleMessageType)bubbleMessageType {
     Message *localPositionMessage = [[Message alloc] initWithLocalPositionPhoto:[UIImage imageNamed:@"Fav_Cell_Loc"] geolocations:@"中国广东省广州市天河区东圃二马路121号" location:[[CLLocation alloc] initWithLatitude:23.110387 longitude:113.399444] sender:@"Jack" timestamp:[NSDate date]];
-    localPositionMessage.avatar = [UIImage imageNamed:@"avatar"];
+    localPositionMessage.avatar = [UIImage imageNamed:@"User"];
     localPositionMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/meIcon@2x.png";
     localPositionMessage.bubbleMessageType = bubbleMessageType;
     
@@ -114,74 +116,41 @@
     // Do any additional setup after loading the view.
     
     if (CURRENT_SYS_VERSION >= 7.0) {
-        self.navigationController.interactivePopGestureRecognizer.delaysTouchesBegan=NO;
+        self.navigationController.interactivePopGestureRecognizer.delaysTouchesBegan = NO;
     }
-    self.title = NSLocalizedStringFromTable(@"Chat", @"MessageDisplayKitString", @"聊天");
-    
-    // Custom UI
-    //    [self setBackgroundColor:[UIColor clearColor]];
-    //    [self setBackgroundImage:[UIImage imageNamed:@"TableViewBackgroundImage"]];
-    
+    self.navigationItem.title = @"聊天";
     // 设置自身用户名
     self.messageSender = @"Jack";
     
-    // 添加第三方接入数据
-    NSMutableArray *shareMenuItems = [NSMutableArray array];
-    NSArray *plugIcons = @[@"sharemore_pic", @"sharemore_video", @"sharemore_location", @"sharemore_friendcard", @"sharemore_myfav", @"sharemore_wxtalk", @"sharemore_videovoip", @"sharemore_voiceinput", @"sharemore_openapi", @"sharemore_openapi", @"avatar"];
-    NSArray *plugTitle = @[@"照片", @"拍摄", @"位置", @"名片", @"我的收藏", @"实时对讲机", @"视频聊天", @"语音输入", @"大众点评", @"应用", @"曾宪华"];
-    
-    for (NSString *plugIcon in plugIcons) {
-        ShareMenuItemModel *shareMenuItem = [[ShareMenuItemModel alloc] initWithNormalIconImage:[UIImage imageNamed:plugIcon] title:[plugTitle objectAtIndex:[plugIcons indexOfObject:plugIcon]]];
-        [shareMenuItems addObject:shareMenuItem];
-    }
-    
-    NSMutableArray *emotionManagers = [NSMutableArray array];
-    for (NSInteger i = 0; i < 10; i ++) {
-//        EmotionManager *emotionManager = [[EmotionManager alloc] init];
-//        emotionManager.emotionName = [NSString stringWithFormat:@"表情%ld", (long)i];
-//        NSMutableArray *emotions = [NSMutableArray array];
-//        for (NSInteger j = 0; j < 18; j ++) {
-//            Emotion *emotion = [[Emotion alloc] init];
-//            NSString *imageName = [NSString stringWithFormat:@"section%ld_emotion%ld", (long)i , (long)j % 16];
-//            emotion.emotionPath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"emotion%ld.gif", (long)j] ofType:@""];
-//            emotion.emotionConverPhoto = [UIImage imageNamed:imageName];
-//            [emotions addObject:emotion];
-//        }
-//        emotionManager.emotions = emotions;
-//        
-//        [emotionManagers addObject:emotionManager];
-    }
-    
-//    self.emotionManagers = emotionManagers;
-//    [self.emotionManagerView reloadData];
-    
-    self.shareMenuItems = shareMenuItems;
-    [self.shareMenuView reloadData];
+    self.allowsPanToDismissKeyboard = YES;
     
     [self loadDemoDataSource];
+    
+    [self setBackgroundColor:[UIColor whiteColor]];
+    [self setBackgroundImage:[UIImage imageNamed:@"TableViewBackgroundImage"]];
 }
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    [[AudioPlayerHelper shareInstance] stopAudio];
 }
 - (void)dealloc {
     self.emotionManagers = nil;
-//    [[AudioPlayerHelper shareInstance] setDelegate:nil];
 }
 
 
 #pragma mark - MessageTableViewCell delegate
 
 - (void)multiMediaMessageDidSelectedOnMessage:(id<MessageModel>)message atIndexPath:(NSIndexPath *)indexPath onMessageTableViewCell:(MessageTableViewCell *)messageTableViewCell {
+    
     UIViewController *disPlayViewController;
     switch (message.messageMediaType) {
+            
         case BubbleMessageMediaTypeVideo:
         case BubbleMessageMediaTypePhoto: {
             NSLog(@"message : %@", message.photo);
             NSLog(@"message : %@", message.videoConverPhoto);
-//            DisplayMediaViewController *messageDisplayTextView = [[DisplayMediaViewController alloc] init];
-//            messageDisplayTextView.message = message;
-//            disPlayViewController = messageDisplayTextView;
+            DisplayMediaViewController *messageDisplayTextView = [[DisplayMediaViewController alloc] init];
+            messageDisplayTextView.message = message;
+            disPlayViewController = messageDisplayTextView;
             break;
         }
             break;
@@ -226,6 +195,8 @@
 }
 
 - (void)didDoubleSelectedOnTextMessage:(id<MessageModel>)message atIndexPath:(NSIndexPath *)indexPath {
+    
+    
     NSLog(@"text : %@", message.text);
     DisplayTextViewController *displayTextViewController = [[DisplayTextViewController alloc] init];
     displayTextViewController.message = message;
@@ -256,22 +227,7 @@
     self.currentSelectedCell = nil;
 }
 
-//#pragma mark - EmotionManagerView DataSource
-//
-//- (NSInteger)numberOfEmotionManagers {
-//    return self.emotionManagers.count;
-//}
-//
-//- (EmotionManager *)emotionManagerForColumn:(NSInteger)column {
-//    return [self.emotionManagers objectAtIndex:column];
-//}
-//
-//- (NSArray *)emotionManagersAtManager {
-//    return self.emotionManagers;
-//}
-
 #pragma mark - MessageTableViewController Delegate
-
 - (BOOL)shouldLoadMoreMessagesScrollToTop {
     return YES;
 }
@@ -283,7 +239,9 @@
         WEAKSELF
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSMutableArray *messages = [weakSelf getTestMessages];
-            dispatch_async(dispatch_get_main_queue(), ^{
+            
+            //模拟网络延时 3s后加载
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [weakSelf insertOldMessages:messages];
                 weakSelf.loadingMoreMessage = NO;
             });
@@ -300,7 +258,7 @@
  */
 - (void)didSendText:(NSString *)text fromSender:(NSString *)sender onDate:(NSDate *)date {
     Message *textMessage = [[Message alloc] initWithText:text sender:sender timestamp:date];
-    textMessage.avatar = [UIImage imageNamed:@"Avatar"];
+    textMessage.avatar = [UIImage imageNamed:@"userHead"];
     textMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/meIcon@2x.png";
     [self addMessage:textMessage];
     [self finishSendMessageWithBubbleMessageType:BubbleMessageMediaTypeText];
@@ -315,7 +273,7 @@
  */
 - (void)didSendPhoto:(UIImage *)photo fromSender:(NSString *)sender onDate:(NSDate *)date {
     Message *photoMessage = [[Message alloc] initWithPhoto:photo thumbnailUrl:nil originPhotoUrl:nil sender:sender timestamp:date];
-    photoMessage.avatar = [UIImage imageNamed:@"avatar"];
+    photoMessage.avatar = [UIImage imageNamed:@"userHead"];
     photoMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/meIcon@2x.png";
     [self addMessage:photoMessage];
     [self finishSendMessageWithBubbleMessageType:BubbleMessageMediaTypePhoto];
@@ -330,7 +288,7 @@
  */
 - (void)didSendVideoConverPhoto:(UIImage *)videoConverPhoto videoPath:(NSString *)videoPath fromSender:(NSString *)sender onDate:(NSDate *)date {
     Message *videoMessage = [[Message alloc] initWithVideoConverPhoto:videoConverPhoto videoPath:videoPath videoUrl:nil sender:sender timestamp:date];
-    videoMessage.avatar = [UIImage imageNamed:@"avatar"];
+    videoMessage.avatar = [UIImage imageNamed:@"userHead"];
     videoMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/meIcon@2x.png";
     [self addMessage:videoMessage];
     [self finishSendMessageWithBubbleMessageType:BubbleMessageMediaTypeVideo];
@@ -346,7 +304,7 @@
  */
 - (void)didSendVoice:(NSString *)voicePath voiceDuration:(NSString *)voiceDuration fromSender:(NSString *)sender onDate:(NSDate *)date {
     Message *voiceMessage = [[Message alloc] initWithVoicePath:voicePath voiceUrl:nil voiceDuration:voiceDuration sender:sender timestamp:date];
-    voiceMessage.avatar = [UIImage imageNamed:@"avatar"];
+    voiceMessage.avatar = [UIImage imageNamed:@"userHead"];
     voiceMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/meIcon@2x.png";
     [self addMessage:voiceMessage];
     [self finishSendMessageWithBubbleMessageType:BubbleMessageMediaTypeVoice];
@@ -360,9 +318,10 @@
  *  @param date     发送时间
  */
 - (void)didSendEmotion:(NSString *)emotionPath fromSender:(NSString *)sender onDate:(NSDate *)date {
-    Message *emotionMessage = [[Message alloc] initWithEmotionPath:emotionPath sender:sender timestamp:date];
-    emotionMessage.avatar = [UIImage imageNamed:@"avatar"];
-    emotionMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/meIcon@2x.png";
+    
+    Message *emotionMessage = [[Message alloc] initWithEmotionPath:[[NSBundle mainBundle] pathForResource:@"emotion1.gif" ofType:nil] sender:sender timestamp:date];
+    emotionMessage.avatar = [UIImage imageNamed:@"userHead"];
+//    emotionMessage.avatarUrl = @"https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2259989867,1935385594&fm=27&gp=0.jpg";
     [self addMessage:emotionMessage];
     [self finishSendMessageWithBubbleMessageType:BubbleMessageMediaTypeEmotion];
 }
@@ -372,7 +331,7 @@
  */
 - (void)didSendGeoLocationsPhoto:(UIImage *)geoLocationsPhoto geolocations:(NSString *)geolocations location:(CLLocation *)location fromSender:(NSString *)sender onDate:(NSDate *)date {
     Message *geoLocationsMessage = [[Message alloc] initWithLocalPositionPhoto:geoLocationsPhoto geolocations:geolocations location:location sender:sender timestamp:date];
-    geoLocationsMessage.avatar = [UIImage imageNamed:@"avatar"];
+    geoLocationsMessage.avatar = [UIImage imageNamed:@"userHead"];
     geoLocationsMessage.avatarUrl = @"http://childapp.pailixiu.com/jack/meIcon@2x.png";
     [self addMessage:geoLocationsMessage];
     [self finishSendMessageWithBubbleMessageType:BubbleMessageMediaTypeLocalPosition];
@@ -409,9 +368,9 @@
  *  @return 返回YES or NO
  */
 - (BOOL)shouldPreventScrollToBottomWhileUserScrolling {
+    
     return YES;
 }
-
 
 
 

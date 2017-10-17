@@ -12,4 +12,8 @@
 
 - (UIImage *)createRoundedWithRadius:(CGFloat)radius;
 
+
++ (UIImage *)loadImageWithImageName:(NSString *)imageName;
+
+
 @end

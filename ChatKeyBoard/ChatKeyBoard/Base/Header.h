@@ -10,9 +10,6 @@
 #define Header_h
 
 
-
-
-
 //获取一段时间间隔
 #define StartTime CFAbsoluteTime start = CFAbsoluteTimeGetCurrent()
 #define EndTime   NSLog(@"Time: %f", CFAbsoluteTimeGetCurrent() - start)
@@ -35,15 +32,16 @@ blue:((float)(rgbValue & 0xFF)) / 255.0 alpha:1.0]
 //ChatKeyBoard背景颜色
 #define kChatKeyBoardColor              [UIColor colorWithRed:245/255.f green:245/255.f blue:245/255.f alpha:1.0f]
 
+//键盘显示消失时间
+#define kAnimateWithDuration 0.25
 //键盘上面的工具条
 #define kChatToolBarHeight              49
-
 //表情、更多模块高度
 #define kbottomCotainerHeight           224
 //表情
 #define kFacePanelBottomToolBarWidth    45
-#define kFacePanelBottomHeight          40
-#define kUIPageControllerHeight         25
+#define kFacePanelBottomHeight          35
+#define kUIPageControllerHeight         30
 //更多
 #define kMoreItemH                      80
 #define kMoreItemIconSize               60

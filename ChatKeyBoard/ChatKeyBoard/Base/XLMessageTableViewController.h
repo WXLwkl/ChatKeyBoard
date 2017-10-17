@@ -10,8 +10,8 @@
 
 #import "MessageTextView.h"
 #import "MessageInputView.h"
-#import "ShareMenuView.h"
-#import "EmotionManagerView.h"
+//#import "ShareMenuView.h"
+//#import "EmotionManagerView.h"
 
 #import "MessageTableViewCell.h"
 
@@ -24,6 +24,18 @@
 @optional
 
 /**
+ *  发送语音消息的回调方法
+ *
+ *  @param voicePath        目标语音本地路径
+ *  @param voiceDuration    目标语音时长
+ *  @param sender           发送者的名字
+ *  @param date             发送时间
+ */
+- (void)didSendVoice:(NSString *)voicePath voiceDuration:(NSString*)voiceDuration fromSender:(NSString *)sender onDate:(NSDate *)date;
+
+
+
+/**
  发送文本消息的回调方法
  
  @param text 目标文字字符串
@@ -31,6 +43,17 @@
  @param date 发送时间
  */
 - (void)didSendText:(NSString *)text fromSender:(NSString *)sender onDate:(NSDate *)date;
+
+/**
+ *  发送第三方表情消息的回调方法
+ *
+ *  @param emotionPath 目标第三方表情的本地路径
+ *  @param sender   发送者的名字
+ *  @param date     发送时间
+ */
+- (void)didSendEmotion:(NSString *)emotionPath fromSender:(NSString *)sender onDate:(NSDate *)date;
+
+
 /**
  *  发送图片消息的回调方法
  *
@@ -50,25 +73,6 @@
 - (void)didSendVideoConverPhoto:(UIImage *)videoConverPhoto videoPath:(NSString *)videoPath fromSender:(NSString *)sender onDate:(NSDate *)date;
 
 /**
- *  发送语音消息的回调方法
- *
- *  @param voicePath        目标语音本地路径
- *  @param voiceDuration    目标语音时长
- *  @param sender           发送者的名字
- *  @param date             发送时间
- */
-- (void)didSendVoice:(NSString *)voicePath voiceDuration:(NSString*)voiceDuration fromSender:(NSString *)sender onDate:(NSDate *)date;
-
-/**
- *  发送第三方表情消息的回调方法
- *
- *  @param emotionPath 目标第三方表情的本地路径
- *  @param sender   发送者的名字
- *  @param date     发送时间
- */
-- (void)didSendEmotion:(NSString *)emotionPath fromSender:(NSString *)sender onDate:(NSDate *)date;
-
-/**
  *  发送地理位置的回调方法
  *
  *  @param geoLocationsPhoto 目标显示默认图
@@ -78,6 +82,8 @@
  *  @param date              发送时间
  */
 - (void)didSendGeoLocationsPhoto:(UIImage *)geoLocationsPhoto geolocations:(NSString *)geolocations location:(CLLocation *)location fromSender:(NSString *)sender onDate:(NSDate *)date;
+
+
 
 /**
  *  是否显示时间轴Label的回调方法
@@ -155,10 +161,6 @@
 @property (nonatomic, weak) id <MessageTableViewControllerDelegate> delegate;
 @property (nonatomic, weak) id <MessageTableViewControllerDataSource> dataSource;
 
-/**
- *  用户输入方式
- */
-@property (nonatomic, assign, readonly) InputViewType textViewInputViewType;
 
 /**
  *  加载更多数据的指示器
@@ -182,22 +184,22 @@
 /**
  *  用于显示消息的TableView
  */
-@property (nonatomic, weak, readonly) UITableView *messageTableView;
+@property (nonatomic, strong, readonly) UITableView *messageTableView;
 /**
  *  用于显示发送消息类型控制的工具条，在底部
  */
-@property (nonatomic, weak, readonly) MessageInputView *messageInputView;
+@property (nonatomic, strong, readonly) MessageInputView *messageInputView;
 
 /**
  *  替换键盘的位置的第三方功能控件
  */
-@property (nonatomic, weak, readonly) ShareMenuView *shareMenuView;
+//@property (nonatomic, weak, readonly) ShareMenuView *shareMenuView;
 
 
 /**
  *  管理第三方gif表情的控件
  */
-@property (nonatomic, weak, readonly) EmotionManagerView *emotionManagerView;
+//@property (nonatomic, weak, readonly) EmotionManagerView *emotionManagerView;
 
 /**
  *  是否正在加载更多旧的消息数据
@@ -227,12 +229,31 @@
 /**
  *  输入框的样式，默认为扁平化
  */
-@property (nonatomic, assign) MessageInputViewStyle inputViewStyle;
+//@property (nonatomic, assign) MessageInputViewStyle inputViewStyle;
 
 
 
 
-#pragma mark - DataSource Change
+
+/**
+ *  设置View、tableView的背景颜色
+ *
+ *  @param color 背景颜色
+ */
+- (void)setBackgroundColor:(UIColor *)color;
+
+/**
+ *  设置消息列表的背景图片
+ *
+ *  @param backgroundImage 目标背景图片
+ */
+- (void)setBackgroundImage:(UIImage *)backgroundImage;
+
+
+
+
+
+#pragma mark - message Change
 /**
  *  添加一条新的消息
  *
@@ -262,25 +283,13 @@
  */
 - (void)insertOldMessages:(NSArray *)oldMessages completion:(void (^)())completion;
 
+
 #pragma mark - Messages view controller
 /**
  *  完成发送消息的函数
  */
 - (void)finishSendMessageWithBubbleMessageType:(BubbleMessageMediaType)mediaType;
 
-/**
- *  设置View、tableView的背景颜色
- *
- *  @param color 背景颜色
- */
-- (void)setBackgroundColor:(UIColor *)color;
-
-/**
- *  设置消息列表的背景图片
- *
- *  @param backgroundImage 目标背景图片
- */
-- (void)setBackgroundImage:(UIImage *)backgroundImage;
 
 /**
  *  是否滚动到底部

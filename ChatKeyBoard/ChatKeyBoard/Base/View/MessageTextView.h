@@ -8,12 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-typedef NS_ENUM(NSUInteger, InputViewType) {
-    InputViewTypeNormal = 0,
-    InputViewTypeText,
-    InputViewTypeEmotion,
-    InputViewTypeShareMenu
-};
 
 @interface MessageTextView : UITextView
 
@@ -50,5 +44,6 @@ typedef NS_ENUM(NSUInteger, InputViewType) {
  *  @return 返回占据行数
  */
 + (NSUInteger)numberOfLinesForMessage:(NSString *)text;
+
 
 @end

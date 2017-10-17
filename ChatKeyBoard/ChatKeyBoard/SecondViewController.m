@@ -136,26 +136,25 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (!indexPath.row) {
         [self enterNewsController];
-    }
-//    else if (indexPath.row == 6) {
-//        [self enterCustomCellMessage];
-//    }
-    else {
+    } else {
         [self enterMessage];
     }
 }
+
+/**
+ 进入新闻页面
+ */
 - (void)enterNewsController {
-    NSLog(@"进入新闻页面");
+    
     NewsTableViewController *newsTableViewController = [[NewsTableViewController alloc] init];
     [self pushNewViewController:newsTableViewController];
 }
-- (void)enterCustomCellMessage {
-//    XHCustomCellDemoMessageTableViewController *customCellDemoMessageTableViewController = [[XHCustomCellDemoMessageTableViewController alloc] init];
-//    [self.navigationController pushViewController:customCellDemoMessageTableViewController animated:YES];
-}
 
+/**
+ 消息页面
+ */
 - (void)enterMessage {
-    NSLog(@"消息页面");
+
     WeChatMessageTableViewController *demoWeChatMessageTableViewController = [[WeChatMessageTableViewController alloc] init];
     [self.navigationController pushViewController:demoWeChatMessageTableViewController animated:YES];
 }

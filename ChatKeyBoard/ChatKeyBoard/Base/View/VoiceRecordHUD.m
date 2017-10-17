@@ -15,23 +15,6 @@
 @property (nonatomic, weak) UIImageView *cancelRecordImageView;
 @property (nonatomic, weak) UIImageView *recordingHUDImageView;
 
-/** 逐渐消失自身 */
-- (void)dismissCompled:(void(^)(BOOL finished))compled;
-
-/** 配置是否正在录音，需要显示和吟唱某些特殊控件 */
-- (void)configRecoding:(BOOL)recording;
-
-/**
- *  根据语音输入的大小来配置需要显示的HUD图片
- *
- *  @param peakPower 输入音频的声音大小
- */
-- (void)configRecordingHUDImageWithPeakPower:(CGFloat)peakPower;
-/**
- *  配置默认参数
- */
-- (void)setup;
-
 @end
 
 @implementation VoiceRecordHUD
@@ -114,7 +97,7 @@
 - (void)cancelRecordCompled:(void(^)(BOOL fnished))compled {
     [self dismissCompled:compled];
 }
-
+/** 逐渐消失自身 */
 - (void)dismissCompled:(void(^)(BOOL fnished))compled {
     [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.alpha = 0.0;
@@ -123,12 +106,17 @@
         compled(finished);
     }];
 }
+/** 配置是否正在录音，需要显示和吟唱某些特殊控件 */
 - (void)configRecoding:(BOOL)recording {
     self.microPhoneImageView.hidden = !recording;
     self.recordingHUDImageView.hidden = !recording;
     self.cancelRecordImageView.hidden = recording;
 }
-
+/**
+ *  根据语音输入的大小来配置需要显示的HUD图片
+ *
+ *  @param peakPower 输入音频的声音大小
+ */
 - (void)configRecordingHUDImageWithPeakPower:(CGFloat)peakPower {
     NSString *imageName = @"RecordingSignal00";
     if (peakPower >= 0 && peakPower <= 0.1) {

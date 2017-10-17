@@ -10,7 +10,6 @@
 
 @implementation MessageTextView
 
-
 - (NSUInteger)numberOfLinesOfText {
     return [MessageTextView numberOfLinesForMessage:self.text];
 }

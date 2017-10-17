@@ -8,12 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-#import "MessageTextView.h"
+#import "ChatToolBar.h"
+#import "MoreItemModel.h"
 
-typedef NS_ENUM(NSInteger, MessageInputViewStyle) {
-    // iOS7样式的
-    MessageInputViewStyleFlat
-};
+@class MessageInputView;
 
 @protocol MessageInputViewDelegate <NSObject>
 
@@ -23,23 +21,43 @@ typedef NS_ENUM(NSInteger, MessageInputViewStyle) {
  *
  *  @param messageInputTextView 输入框对象
  */
-- (void)inputTextViewWillBeginEditing:(MessageTextView *)messageInputTextView;
+- (void)inputTextViewWillBeginEditing:(UITextView *)messageInputTextView;
+
+
+/**
+ *  更多功能里的回调
+ */
+- (void)messageInputView:(MessageInputView *)inputView didSelecteShareMenuItem:(MoreItemModel *)moreItem atIndex:(NSInteger)index;
+
+/*!
+ * 点击表情键盘的自定义表情，直接发送
+ */
+- (void)messageInputView:(MessageInputView *)inputView
+       didSelectChartlet:(NSString *)chartletId
+                 catalog:(NSString *)catalogId;
+
+
+/**
+ 点击表情模块下面的“发送”按钮
+
+ @param inputView inputView
+ @param messge 文本的信息
+ */
+- (void)messageInputView:(MessageInputView *)inputView didPressSend:(NSString *)messge;
+
+@optional
 /**
  *  输入框刚好开始编辑
  *
  *  @param messageInputTextView 输入框对象
  */
-- (void)inputTextViewDidBeginEditing:(MessageTextView *)messageInputTextView;
-
-@optional
-
+- (void)inputTextViewDidBeginEditing:(UITextView *)messageInputTextView;
 /**
- *  在发送文本和语音之间发送改变时，会触发这个回调函数
- *
- *  @param changed 是否改为发送语音状态
+ 监听输入框变化
+ 
+ @param messageInputTextView 输入框
  */
-- (void)didChangeSendVoiceAction:(BOOL)changed;
-
+- (void)inputTextViewDidChange:(UITextView *)messageInputTextView;
 /**
  *  发送文本消息，包括系统的表情
  *
@@ -47,13 +65,29 @@ typedef NS_ENUM(NSInteger, MessageInputViewStyle) {
  */
 - (void)didSendTextAction:(NSString *)text;
 
+
+
+/**
+ *  在发送文本和语音之间发送改变时，会触发这个回调函数
+ *
+ *  @param select 是否改为发送语音状态
+ */
+- (void)didChangeSendVoiceAction:(BOOL)select;
+/**
+ *  点击表情切换按钮
+ */
+- (void)didSelectedFaceAction:(BOOL)select;
+
 /**
  *  点击+号按钮Action
  */
-- (void)didSelectedMultipleMediaAction;
+- (void)didSelectedMultipleMediaAction:(BOOL)select;
+
+
+
 
 /**
- *  按下錄音按鈕 "準備" 錄音
+ *  按下录音按钮 "准备" 录音
  */
 - (void)prepareRecordingVoiceActionWithCompletion:(BOOL (^)(void))completion;
 /**
@@ -77,50 +111,29 @@ typedef NS_ENUM(NSInteger, MessageInputViewStyle) {
  */
 - (void)didDragInsideAction;
 
-/**
- *  发送第三方表情
- *
- *  @param sendFace 目标表情的本地路径
- */
-- (void)didSendFaceAction:(BOOL)sendFace;
+
 
 
 @end
 
 @interface MessageInputView : UIImageView
 
+
 @property (nonatomic, weak) id<MessageInputViewDelegate> delegate;
 
-/**
- *  用于输入文本消息的输入框
- */
-@property (nonatomic, weak, readonly) MessageTextView *inputTextView;
+
+
+///**
+// *  当前输入工具条的样式
+// */
+//@property (nonatomic, assign) MessageInputViewStyle messageInputViewStyle;  // default is XHMessageInputViewStyleFlat
+//
+
 
 /**
- *  切换文本和语音的按钮
+ 输入框状态
  */
-@property (nonatomic, weak, readonly) UIButton *voiceChangeButton;
-
-/**
- *  +号按钮
- */
-@property (nonatomic, weak, readonly) UIButton *multiMediaSendButton;
-
-/**
- *  表情按钮
- */
-@property (nonatomic, weak, readonly) UIButton *faceSendButton;
-
-/**
- *  语音录制按钮
- */
-@property (nonatomic, weak, readonly) UIButton *holdDownButton;
-
-/**
- *  当前输入工具条的样式
- */
-@property (nonatomic, assign) MessageInputViewStyle messageInputViewStyle;  // default is XHMessageInputViewStyleFlat
-
+@property (nonatomic, assign) InputViewState inputViewState;
 
 
 /**
@@ -138,34 +151,5 @@ typedef NS_ENUM(NSInteger, MessageInputViewStyle) {
  */
 @property (nonatomic, assign) BOOL allowsSendFace; // default is YES
 
-#pragma mark - Message input view
-
-/**
- *  动态改变高度
- *
- *  @param changeInHeight 目标变化的高度
- */
-- (void)adjustTextViewHeightBy:(CGFloat)changeInHeight;
-
-/**
- *  获取输入框内容字体行高
- *
- *  @return 返回行高
- */
-+ (CGFloat)textViewLineHeight;
-
-/**
- *  获取最大行数
- *
- *  @return 返回最大行数
- */
-+ (CGFloat)maxLines;
-
-/**
- *  获取根据最大行数和每行高度计算出来的最大显示高度
- *
- *  @return 返回最大显示高度
- */
-+ (CGFloat)maxHeight;
 
 @end
