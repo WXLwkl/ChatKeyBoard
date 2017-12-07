@@ -749,7 +749,8 @@ static CGPoint  delayOffset = {0.0};
     }
 }
 - (void)messageInputView:(MessageInputView *)inputView didPressSend:(NSString *)messge {
-    NSLog(@"text : %@", messge);
+    
+    NSLog(@"表情里面的发送 text : %@", messge);
     if ([self.delegate respondsToSelector:@selector(didSendText:fromSender:onDate:)]) {
         [self.delegate didSendText:messge fromSender:self.messageSender onDate:[NSDate date]];
     }

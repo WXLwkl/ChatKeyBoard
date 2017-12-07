@@ -20,12 +20,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ChatKeyBoard/Base/XLMessageTableViewController.m"
-            timestampString = "529923417.630214"
+            timestampString = "530008599.396241"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "875"
-            endingLineNumber = "875"
+            startingLineNumber = "876"
+            endingLineNumber = "876"
             landmarkName = "-shouldPreventScrollToBottomWhileUserScrolling"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ChatKeyBoard/Base/XLMessageTableViewController.m"
+            timestampString = "530008599.396241"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1035"
+            endingLineNumber = "1035"
+            landmarkName = "-setLoadingMoreMessage:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -35,13 +51,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ChatKeyBoard/Base/XLMessageTableViewController.m"
-            timestampString = "529924309.953786"
+            filePath = "ChatKeyBoard/Assets.xcassets/WeChatMessageTableViewController.m"
+            timestampString = "530007756.776298"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1034"
-            endingLineNumber = "1034"
-            landmarkName = "-setLoadingMoreMessage:"
+            startingLineNumber = "198"
+            endingLineNumber = "198"
+            landmarkName = "-didDoubleSelectedOnTextMessage:atIndexPath:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ChatKeyBoard/Base/View/MessageBubbleView.m"
+            timestampString = "530181582.093019"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "320"
+            endingLineNumber = "320"
+            landmarkName = "-configureMessageDisplayMediaWithMessage:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

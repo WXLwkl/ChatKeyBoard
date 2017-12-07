@@ -67,10 +67,11 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect, float ovalWi
     return image;
 }
 
-+ (UIImage *)nim_emoticonInKit:(NSString *)imageName
-{
++ (UIImage *)nim_emoticonInKit:(NSString *)imageName {
+    
     NSString *name = [@"NIMKitEmoticon.bundle" stringByAppendingPathComponent:imageName];
     UIImage *image = [UIImage imageNamed:name];
+    
     return image? image : [UIImage imageNamed:imageName];
 }
 @end

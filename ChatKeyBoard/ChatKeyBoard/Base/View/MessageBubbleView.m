@@ -11,6 +11,10 @@
 #import "ConfigurationHelper.h"
 #import "Header.h"
 
+
+#import "LiuqsCellFrame.h"
+
+
 #define kHaveBubbleMargin 8.0f // 文本、视频、表情气泡上下边的间隙
 #define kHaveBubbleVoiceMargin 13.5f // 语音气泡上下边的间隙
 #define kHaveBubblePhotoMargin 6.5f // 图片、地理位置气泡上下边的间隙
@@ -29,7 +33,7 @@
 
 @interface MessageBubbleView ()
 
-@property (nonatomic, weak, readwrite) SETextView *displayTextView;
+@property (nonatomic, weak, readwrite) UILabel *displayTextView;
 
 @property (nonatomic, weak, readwrite) UIImageView *bubbleImageView;
 
@@ -292,11 +296,30 @@
             break;
     }
 }
+///创建消息模型添加到数据源数组
+-(LiuqsCellFrame *)creatNormalMessageWithText:(NSString *)text
+{
+    LiuqsCellFrame *cellFrame = [[LiuqsCellFrame alloc]init];
+    LiuqsChatMessage *message = [[LiuqsChatMessage alloc]init];
+    message.text = text;
+    message.type = @"message";
+    cellFrame.message = message;
+    return cellFrame;
+}
 
 - (void)configureMessageDisplayMediaWithMessage:(id <MessageModel>)message {
     switch (message.messageMediaType) {
         case BubbleMessageMediaTypeText:
-            _displayTextView.attributedText = [[MessageBubbleHelper sharedMessageBubbleHelper] bubbleAttributtedStringWithText:[message text]];
+//            _displayTextView.attributedText = [[MessageBubbleHelper sharedMessageBubbleHelper] bubbleAttributtedStringWithText:[message text]];
+        {
+            LiuqsCellFrame *model = [self creatNormalMessageWithText:[message text]];
+// 
+//            
+          
+            NSMutableAttributedString *attributedText = model.message.attributedText;
+            _displayTextView.attributedText = attributedText;
+            
+        }
             break;
         case BubbleMessageMediaTypePhoto:
             [_bubblePhotoImageView configureMessagePhoto:message.photo thumbnailUrl:message.thumbnailUrl originPhotoUrl:message.originPhotoUrl onBubbleMessageType:self.message.bubbleMessageType];
@@ -344,6 +367,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame
                       message:(id <MessageModel>)message {
+    
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
@@ -361,14 +385,15 @@
         
         // 2、初始化显示文本消息的TextView
         if (!_displayTextView) {
-            SETextView *displayTextView = [[SETextView alloc] initWithFrame:CGRectZero];
+            UILabel *displayTextView = [[UILabel alloc] initWithFrame:CGRectZero];
             displayTextView.textColor = [UIColor colorWithWhite:0.143 alpha:1.000];
-            displayTextView.backgroundColor = [UIColor clearColor];
-            displayTextView.selectable = NO;
-            displayTextView.lineSpacing = kTextLineSpacing;
+            displayTextView.backgroundColor = [UIColor redColor];
+            displayTextView.numberOfLines = 0;
+//            displayTextView.selectable = NO;
+//            displayTextView.lineSpacing = kTextLineSpacing;
             displayTextView.font = [[MessageBubbleView appearance] font];
-            displayTextView.showsEditingMenuAutomatically = NO;
-            displayTextView.highlighted = NO;
+//            displayTextView.showsEditingMenuAutomatically = NO;
+//            displayTextView.highlighted = NO;
             [self addSubview:displayTextView];
             _displayTextView = displayTextView;
         }

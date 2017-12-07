@@ -15,6 +15,7 @@
                    timestamp:(NSDate *)timestamp {
     self = [super init];
     if (self) {
+        
         self.text = text;
         self.timestamp = timestamp;
         self.messageMediaType = BubbleMessageMediaTypeText;
@@ -94,6 +95,7 @@
                           timestamp:(NSDate *)timestamp {
     self = [super init];
     if (self) {
+
         self.emotionPath = emotionPath;
         
         self.sender = sender;

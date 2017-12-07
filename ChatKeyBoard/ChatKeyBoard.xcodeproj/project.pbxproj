@@ -140,6 +140,10 @@
 		9148812A1F94A4E50040A966 /* DisplayMediaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 914881291F94A4E50040A966 /* DisplayMediaViewController.m */; };
 		9148812D1F94A7A70040A966 /* 02.mov in Resources */ = {isa = PBXBuildFile; fileRef = 9148812C1F94A7A70040A966 /* 02.mov */; };
 		91616AA91F95DE010008C645 /* TableViewBackgroundImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 91616AA81F95DE010008C645 /* TableViewBackgroundImage@2x.png */; };
+		919753361F99D8AC00F5D114 /* LiuqsCellFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 9197532F1F99D8AC00F5D114 /* LiuqsCellFrame.m */; };
+		919753371F99D8AC00F5D114 /* LiuqsChangeStrTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 919753311F99D8AC00F5D114 /* LiuqsChangeStrTool.m */; };
+		919753381F99D8AC00F5D114 /* LiuqsChatMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 919753331F99D8AC00F5D114 /* LiuqsChatMessage.m */; };
+		919753391F99D8AC00F5D114 /* LiuqsTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = 919753351F99D8AC00F5D114 /* LiuqsTextAttachment.m */; };
 		91AE82491F7C865500715D80 /* InputEmoticonTabView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91AE82481F7C865500715D80 /* InputEmoticonTabView.m */; };
 		91B352EA1F7B4B7600843048 /* EmoticonPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B352E91F7B4B7600843048 /* EmoticonPageView.m */; };
 		91B352EE1F7B6CEE00843048 /* EmoticonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B352ED1F7B6CEE00843048 /* EmoticonManager.m */; };
@@ -363,6 +367,14 @@
 		914881291F94A4E50040A966 /* DisplayMediaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayMediaViewController.m; sourceTree = "<group>"; };
 		9148812C1F94A7A70040A966 /* 02.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = 02.mov; sourceTree = "<group>"; };
 		91616AA81F95DE010008C645 /* TableViewBackgroundImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TableViewBackgroundImage@2x.png"; sourceTree = "<group>"; };
+		9197532E1F99D8AC00F5D114 /* LiuqsCellFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiuqsCellFrame.h; sourceTree = "<group>"; };
+		9197532F1F99D8AC00F5D114 /* LiuqsCellFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiuqsCellFrame.m; sourceTree = "<group>"; };
+		919753301F99D8AC00F5D114 /* LiuqsChangeStrTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiuqsChangeStrTool.h; sourceTree = "<group>"; };
+		919753311F99D8AC00F5D114 /* LiuqsChangeStrTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiuqsChangeStrTool.m; sourceTree = "<group>"; };
+		919753321F99D8AC00F5D114 /* LiuqsChatMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiuqsChatMessage.h; sourceTree = "<group>"; };
+		919753331F99D8AC00F5D114 /* LiuqsChatMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiuqsChatMessage.m; sourceTree = "<group>"; };
+		919753341F99D8AC00F5D114 /* LiuqsTextAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiuqsTextAttachment.h; sourceTree = "<group>"; };
+		919753351F99D8AC00F5D114 /* LiuqsTextAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiuqsTextAttachment.m; sourceTree = "<group>"; };
 		91AE82471F7C865500715D80 /* InputEmoticonTabView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputEmoticonTabView.h; path = View/InputEmoticonTabView.h; sourceTree = "<group>"; };
 		91AE82481F7C865500715D80 /* InputEmoticonTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InputEmoticonTabView.m; path = View/InputEmoticonTabView.m; sourceTree = "<group>"; };
 		91B352E81F7B4B7600843048 /* EmoticonPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmoticonPageView.h; path = View/EmoticonPageView.h; sourceTree = "<group>"; };
@@ -554,6 +566,14 @@
 				91FBDE341F78F4FE004D10A7 /* ExpressionModel.m */,
 				91FBDE301F78F2D2004D10A7 /* ExpressionHelper.h */,
 				91FBDE311F78F2D2004D10A7 /* ExpressionHelper.m */,
+				9197532E1F99D8AC00F5D114 /* LiuqsCellFrame.h */,
+				9197532F1F99D8AC00F5D114 /* LiuqsCellFrame.m */,
+				919753301F99D8AC00F5D114 /* LiuqsChangeStrTool.h */,
+				919753311F99D8AC00F5D114 /* LiuqsChangeStrTool.m */,
+				919753321F99D8AC00F5D114 /* LiuqsChatMessage.h */,
+				919753331F99D8AC00F5D114 /* LiuqsChatMessage.m */,
+				919753341F99D8AC00F5D114 /* LiuqsTextAttachment.h */,
+				919753351F99D8AC00F5D114 /* LiuqsTextAttachment.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -1058,6 +1078,7 @@
 				9148812A1F94A4E50040A966 /* DisplayMediaViewController.m in Sources */,
 				911E4E1E1F6A7E9400141571 /* MessageBubbleHelper.m in Sources */,
 				911E4DB31F6A77C600141571 /* MessageTableViewCell.m in Sources */,
+				919753381F99D8AC00F5D114 /* LiuqsChatMessage.m in Sources */,
 				91D6AAA81F789BBD005B35F4 /* MoreItemModel.m in Sources */,
 				9101C5B11F6BBD7700346BF2 /* MessageVideoConverPhotoFactory.m in Sources */,
 				911E4DEB1F6A792300141571 /* SETextMagnifierRanged.m in Sources */,
@@ -1078,6 +1099,7 @@
 				911E4DE21F6A792300141571 /* SELineLayout.m in Sources */,
 				911E4DE31F6A792300141571 /* SELinkText.m in Sources */,
 				911E4D9B1F6A643100141571 /* EmoticonManagerView.m in Sources */,
+				919753361F99D8AC00F5D114 /* LiuqsCellFrame.m in Sources */,
 				911E4E271F6A84AB00141571 /* XHCacheManager.m in Sources */,
 				911E4E151F6A7B8100141571 /* BubblePhotoImageView.m in Sources */,
 				91B352EE1F7B6CEE00843048 /* EmoticonManager.m in Sources */,
@@ -1105,8 +1127,10 @@
 				911E4E0A1F6A7B4900141571 /* NSString+MessageInputView.m in Sources */,
 				911E4E2A1F6A84E400141571 /* XHFileAttribute.m in Sources */,
 				9101C61C1F6BC96300346BF2 /* WeChatMessageTableViewController.m in Sources */,
+				919753371F99D8AC00F5D114 /* LiuqsChangeStrTool.m in Sources */,
 				911E4DE41F6A792300141571 /* SESelectionGrabber.m in Sources */,
 				9100D9991F7CDE780034BDAB /* EmoticonButton.m in Sources */,
+				919753391F99D8AC00F5D114 /* LiuqsTextAttachment.m in Sources */,
 				9101C6251F6BCDC000346BF2 /* DisplayLocationViewController.m in Sources */,
 				911E4DE11F6A792300141571 /* SEConstants.m in Sources */,
 				911E4E211F6A82C200141571 /* MessageVoiceFactory.m in Sources */,

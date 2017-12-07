@@ -499,6 +499,7 @@ static const CGFloat kUserNameLabelHeight = 20;
 
 - (void)awakeFromNib {
     // Initialization code
+    [super awakeFromNib];
     [self setup];
 }
 
